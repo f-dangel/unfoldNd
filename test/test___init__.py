@@ -17,6 +17,6 @@ def test_hello(name):
 @pytest.mark.expensive
 @pytest.mark.parametrize("name", NAMES, ids=IDS)
 def test_hello_expensive(name):
-    """Expensive test of hello function. Will only be run on master ad development."""
+    """Expensive test of hello function. Will only be run on main and development."""
     time.sleep(1)
     unfoldNd.hello(name)

@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - development
-      - master
+      - main
       - release
 
 
@@ -32,11 +32,11 @@ jobs:
         pip install -r requirements/test.txt
         pip install .
     - name: Run test
-      if: contains('refs/heads/master refs/heads/development refs/heads/release', github.ref)
+      if: contains('refs/heads/main refs/heads/development refs/heads/release', github.ref)
       run: |
         make test
     - name: Run test-light
-      if: contains('refs/heads/master refs/heads/development refs/heads/release', github.ref) != 1
+      if: contains('refs/heads/main refs/heads/development refs/heads/release', github.ref) != 1
       run: |
         make test-light
 
