@@ -40,12 +40,3 @@ def unfoldNd(input, kernel_size, dilation=1, padding=0, stride=1):
     See docs at https://pytorch.org/docs/stable/nn.functional.html.
     """
     raise NotImplementedError
-
-
-def hello(name):
-    """Say hello to a name.
-
-    Args:
-        name (str): Name to say hello to.
-    """
-    print(f"Hello, {name}")
