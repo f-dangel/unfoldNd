@@ -14,7 +14,7 @@ on:
 jobs:
   darglint:
     # NOTE: Uncomment the following line to disable
-    # if: false
+    if: false
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
