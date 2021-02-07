@@ -43,36 +43,29 @@ def unfoldNd(input, kernel_size, dilation=1, padding=0, stride=1):
 
     See docs at https://pytorch.org/docs/stable/nn.functional.html.
     """
-    # TODO Write tests before removing
-    NOT_IMPLEMENTED = True
+    batch_size, in_channels = input.shape[0], input.shape[1]
 
-    if NOT_IMPLEMENTED:
-        raise NotImplementedError
+    # get convolution operation
+    batch_size_and_in_channels_dims = 2
+    N = input.dim() - batch_size_and_in_channels_dims
+    conv = _get_conv(N)
 
-    else:
-        batch_size, in_channels = input.shape[0], input.shape[1]
+    # prepare one-hot convolution kernel
+    kernel_size = _tuple(kernel_size, N)
+    kernel_size_numel = _get_kernel_size_numel(kernel_size)
+    weight = _make_weight(in_channels, kernel_size).to(input.device)
 
-        # get convolution operation
-        batch_size_and_in_channels_dims = 2
-        N = input.dim() - batch_size_and_in_channels_dims
-        conv = _get_conv(N)
+    unfold = conv(
+        input,
+        weight,
+        bias=None,
+        stride=stride,
+        padding=padding,
+        dilation=dilation,
+        groups=in_channels,
+    )
 
-        # prepare one-hot convolution kernel
-        kernel_size = _tuple(kernel_size, N)
-        kernel_size_numel = _get_kernel_size_numel(kernel_size)
-        weight = _make_weight(in_channels, kernel_size).to(input.device)
-
-        unfold = conv(
-            input,
-            weight,
-            bias=None,
-            stride=stride,
-            padding=padding,
-            dilation=dilation,
-            groups=in_channels,
-        )
-
-        return unfold.reshape(batch_size, in_channels * kernel_size_numel, -1)
+    return unfold.reshape(batch_size, in_channels * kernel_size_numel, -1)
 
 
 def _tuple(kernel_size, N):
