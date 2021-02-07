@@ -16,7 +16,7 @@ class UnfoldNd(torch.nn.Module):
     See docs at https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html.
     """
 
-    def __init__(self, kernel_size, dilation, padding=0, stride=1):
+    def __init__(self, kernel_size, dilation=1, padding=0, stride=1):
         super().__init__()
 
         self._kernel_size = kernel_size
