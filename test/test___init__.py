@@ -5,11 +5,14 @@ from test.settings import (
     PROBLEMS_1D_IDS,
     PROBLEMS_2D,
     PROBLEMS_2D_IDS,
+    PROBLEMS_3D,
+    PROBLEMS_3D_IDS,
     UNSUPPORTED_KERNEL_SIZE,
     UNSUPPORTED_KERNEL_SIZE_IDS,
     UNSUPPORTED_N,
     UNSUPPORTED_N_IDS,
 )
+from test.utils import _conv_unfold
 
 import pytest
 import torch
@@ -63,6 +66,31 @@ def test_Unfold1d_vs_dummy_dim_Unfold(problem):
     result_torch = torch.nn.Unfold(**unfold_kwargs_dummy_dim)(inputs_dummy_dim)
 
     assert torch.allclose(result, result_torch)
+
+
+@pytest.mark.parametrize("problem", PROBLEMS_3D, ids=PROBLEMS_3D_IDS)
+def test_Unfold3d_vs_Conv3d(problem):
+    """
+    Use unfolded input in convolution with matrix-view kernel, compare with Conv3d.
+    """
+    seed = problem["seed"]
+    input_shape = problem["input_shape"]
+    unfold_kwargs = problem["unfold_kwargs"]
+    out_channels = problem["out_channels"]
+    in_channels = input_shape[1]
+
+    torch.manual_seed(seed)
+    inputs = torch.rand(input_shape)
+
+    conv3d_module = torch.nn.Conv3d(
+        in_channels, out_channels, **unfold_kwargs, bias=False
+    )
+    torch_result = conv3d_module(inputs)
+
+    unfolded_inputs = unfoldNd.UnfoldNd(**unfold_kwargs)(inputs)
+    result = _conv_unfold(inputs, unfolded_inputs, conv3d_module)
+
+    assert torch.allclose(torch_result, result, atol=5e-7)
 
 
 @pytest.mark.parametrize("N", UNSUPPORTED_N, ids=UNSUPPORTED_N_IDS)

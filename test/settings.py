@@ -106,6 +106,65 @@ PROBLEMS_2D = [
 ]
 PROBLEMS_2D_IDS = [make_id(problem) for problem in PROBLEMS_2D]
 
+
+PROBLEMS_3D = [
+    {
+        "seed": 0,
+        "input_shape": (2, 3, 50, 40, 30),
+        "unfold_kwargs": {
+            "kernel_size": 1,
+        },
+        "out_channels": 1,
+    },
+    {
+        "seed": 1,
+        "input_shape": (2, 3, 50, 40, 30),
+        "unfold_kwargs": {
+            "kernel_size": 2,
+        },
+        "out_channels": 2,
+    },
+    {
+        "seed": 2,
+        "input_shape": (2, 3, 50, 40, 30),
+        "unfold_kwargs": {
+            "kernel_size": (4, 3, 2),
+        },
+        "out_channels": 4,
+    },
+    {
+        "seed": 3,
+        "input_shape": (2, 3, 50, 40, 30),
+        "unfold_kwargs": {
+            "kernel_size": (4, 3, 2),
+            "dilation": 2,
+        },
+        "out_channels": 5,
+    },
+    {
+        "seed": 4,
+        "input_shape": (2, 3, 50, 40, 30),
+        "unfold_kwargs": {
+            "kernel_size": (4, 3, 2),
+            "dilation": 2,
+            "padding": 1,
+        },
+        "out_channels": 10,
+    },
+    {
+        "seed": 5,
+        "input_shape": (2, 3, 50, 40, 30),
+        "unfold_kwargs": {
+            "kernel_size": (4, 3, 2),
+            "dilation": 2,
+            "padding": 1,
+            "stride": 2,
+        },
+        "out_channels": 10,
+    },
+]
+PROBLEMS_3D_IDS = [make_id(problem) for problem in PROBLEMS_3D]
+
 UNSUPPORTED_N = [4, -1]
 UNSUPPORTED_N_IDS = [f"N={n}" for n in UNSUPPORTED_N]
 
