@@ -1,6 +1,8 @@
 """Tests for unfoldNd/__init__.py."""
 
 from test.settings import (
+    DEVICES,
+    DEVICES_ID,
     PROBLEMS_1D,
     PROBLEMS_1D_IDS,
     PROBLEMS_2D,
@@ -21,33 +23,35 @@ from torch.nn.modules.utils import _pair
 import unfoldNd
 
 
+@pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
 @pytest.mark.parametrize("problem", PROBLEMS_2D, ids=PROBLEMS_2D_IDS)
-def test_Unfold2d_vs_Unfold(problem):
+def test_Unfold2d_vs_Unfold(problem, device):
     """Compare with ``torch.nn.Unfold`` for a 4d input."""
     seed = problem["seed"]
     input_shape = problem["input_shape"]
     unfold_kwargs = problem["unfold_kwargs"]
 
     torch.manual_seed(seed)
-    inputs = torch.rand(input_shape)
+    inputs = torch.rand(input_shape).to(device)
 
-    result = unfoldNd.UnfoldNd(**unfold_kwargs)(inputs)
-    result_torch = torch.nn.Unfold(**unfold_kwargs)(inputs)
+    result = unfoldNd.UnfoldNd(**unfold_kwargs).to(device)(inputs)
+    result_torch = torch.nn.Unfold(**unfold_kwargs).to(device)(inputs)
 
     assert torch.allclose(result, result_torch)
 
 
+@pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
 @pytest.mark.parametrize("problem", PROBLEMS_1D, ids=PROBLEMS_1D_IDS)
-def test_Unfold1d_vs_dummy_dim_Unfold(problem):
+def test_Unfold1d_vs_dummy_dim_Unfold(problem, device):
     """Compare with ``torch.nn.Unfold`` for a 3d input (adding a dummy dimension)."""
     seed = problem["seed"]
     input_shape = problem["input_shape"]
     unfold_kwargs = problem["unfold_kwargs"]
 
     torch.manual_seed(seed)
-    inputs = torch.rand(input_shape)
+    inputs = torch.rand(input_shape).to(device)
 
-    result = unfoldNd.UnfoldNd(**unfold_kwargs)(inputs)
+    result = unfoldNd.UnfoldNd(**unfold_kwargs).to(device)(inputs)
 
     def _add_dummy_dim(unfold_kwargs, inputs):
         """Add dummy dimension to unfold hyperparameters and input."""
@@ -63,13 +67,16 @@ def test_Unfold1d_vs_dummy_dim_Unfold(problem):
         return new_kwargs, new_inputs
 
     unfold_kwargs_dummy_dim, inputs_dummy_dim = _add_dummy_dim(unfold_kwargs, inputs)
-    result_torch = torch.nn.Unfold(**unfold_kwargs_dummy_dim)(inputs_dummy_dim)
+    result_torch = torch.nn.Unfold(**unfold_kwargs_dummy_dim).to(device)(
+        inputs_dummy_dim
+    )
 
     assert torch.allclose(result, result_torch)
 
 
+@pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
 @pytest.mark.parametrize("problem", PROBLEMS_3D, ids=PROBLEMS_3D_IDS)
-def test_Unfold3d_vs_Conv3d(problem):
+def test_Unfold3d_vs_Conv3d(problem, device):
     """
     Use unfolded input in convolution with matrix-view kernel, compare with Conv3d.
     """
@@ -80,14 +87,14 @@ def test_Unfold3d_vs_Conv3d(problem):
     in_channels = input_shape[1]
 
     torch.manual_seed(seed)
-    inputs = torch.rand(input_shape)
+    inputs = torch.rand(input_shape).to(device)
 
     conv3d_module = torch.nn.Conv3d(
         in_channels, out_channels, **unfold_kwargs, bias=False
-    )
+    ).to(device)
     torch_result = conv3d_module(inputs)
 
-    unfolded_inputs = unfoldNd.UnfoldNd(**unfold_kwargs)(inputs)
+    unfolded_inputs = unfoldNd.UnfoldNd(**unfold_kwargs).to(device)(inputs)
     result = _conv_unfold(inputs, unfolded_inputs, conv3d_module)
 
     assert torch.allclose(torch_result, result, atol=5e-7)

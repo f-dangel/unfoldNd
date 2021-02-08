@@ -1,6 +1,9 @@
 """Problem settings for test."""
 
-from test.utils import make_id
+from test.utils import get_available_devices, make_id
+
+DEVICES = get_available_devices()
+DEVICES_ID = [f"device={dev}" for dev in DEVICES]
 
 PROBLEMS_1D = [
     {
