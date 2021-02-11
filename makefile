@@ -11,6 +11,8 @@ help:
 	@echo "        Run pytest on test and report coverage"
 	@echo "test-light"
 	@echo "        Run pytest on the light part of test and report coverage"
+	@echo "examples"
+	@echo "        Run all examples"
 	@echo "install-lint"
 	@echo "        Install only the linter tools (included in install-dev)"
 	@echo "black"
@@ -82,3 +84,8 @@ pydocstyle-check:
 
 conda-env:
 	@conda env create --file .conda_env.yml
+
+.PHONY: examples
+
+examples:
+	@python examples/example.py
