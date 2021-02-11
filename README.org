@@ -38,13 +38,19 @@ Coming soon: a run time comparison with ~torch.nn.Unfold~.
 
 * Background
 
-** TODO The trick
+Convolutions can be expressed as matrix-matrix multiplication between two objects; a matrix-view of the kernel and the unfolded input. The latter results from stacking all elements of the input that overlap with the kernel in one convolution step into a matrix. This perspective is sometimes helpful because it allows treating convolutions similar to linear layers.
 
-Coming soon.
+** The trick
 
-** TODO Applications
+Extracting the input elements that overlap with the kernel can be done by a one-hot kernel of the same dimension, and using the grouped convolutions.
 
-Coming soon.
+** Applications
+
+This is an incomplete list where the unfolded input may be useful:
+
+- It has been used for developing second-order optimization methods in deep learning by approximating the Fisher with Kronecker factors. See [[https://arxiv.org/abs/1602.01407][A Kronecker-factored approximate Fisher matrix for convolution layers]].
+
+- I've used the similarity between linear and convolutional layers to implement some automatic differentiation operations for the latter in [[https://www.backpack.pt][BackPACK]].
 
 * Known issues
 
