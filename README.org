@@ -1,7 +1,7 @@
 #+author: Felix Dangel
 #+title: unfoldNd: N-dimensional unfold in PyTorch
 
-This package uses a numerical trick to perform the operations of [[https://pytorch.org/docs/stable/nn.functional.html#torch.nn.functional.unfold][~torch.nn.functional.unfold~]] and [[https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html][~torch.nn.Unfold~]], also known as ~im2col~. It extends them to higher-dimensional inputs that are currently not supported.
+This package uses a numerical trick to perform the operations of [[https://pytorch.org/docs/stable/nn.functional.html#torch.nn.functional.unfold][ ~torch.nn.functional.unfold~ ]] and [[https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html][ ~torch.nn.Unfold~ ]], also known as ~im2col~. It extends them to higher-dimensional inputs that are currently not supported.
 
 From the [[https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html][PyTorch docs]]:
 
@@ -28,9 +28,9 @@ Check out the [[file:examples/example.py][example]].
 
 This package offers the following functions:
 
-- ~unfoldNd.unfoldNd~ :: Like [[https://pytorch.org/docs/stable/nn.functional.html#torch.nn.functional.unfold][~torch.nn.functional.unfold~]], but supports 3d, 4d, and 5d inputs.
+- ~unfoldNd.unfoldNd~ :: Like [[https://pytorch.org/docs/stable/nn.functional.html#torch.nn.functional.unfold][ ~torch.nn.functional.unfold~ ]], but supports 3d, 4d, and 5d inputs.
 
-- ~unfoldNd.UnfoldNd~ :: Like [[https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html][~torch.nn.Unfold~]], but supports 3d, 4d, and 5d inputs.
+- ~unfoldNd.UnfoldNd~ :: Like [[https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html][ ~torch.nn.Unfold~ ]], but supports 3d, 4d, and 5d inputs.
 
 * Performance
 
