@@ -34,7 +34,7 @@ This package offers the following functions:
 
 * Performance
 
-Coming soon: a run time comparison with ~torch.nn.Unfold~.
+There is a continuous benchmark comparing the forward pass run time and peak memory [[https://f-dangel.github.io/unfoldNd-benchmark/][here]]. More settings have to be added to get an understanding how (in)efficiently the numerical trick works.
 
 * Background
 
