@@ -24,7 +24,7 @@ You can install the package from this repository. Use
 
 * Usage
 
-Check out the [[file:examples/example.py][example]].
+- [[file:examples/example.py][Simple example]]
 
 This package offers the following functions:
 
