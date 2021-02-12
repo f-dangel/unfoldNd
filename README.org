@@ -1,6 +1,9 @@
 #+author: Felix Dangel
 #+title: unfoldNd: N-dimensional unfold in PyTorch
 
+[[https://coveralls.io/repos/github/f-dangel/unfoldNd/badge.svg?branch=main]]
+[[https://img.shields.io/badge/python-3.6+-blue.svg]]
+
 This package uses a numerical trick to perform the operations of [[https://pytorch.org/docs/stable/nn.functional.html#torch.nn.functional.unfold][ ~torch.nn.functional.unfold~ ]] and [[https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html][ ~torch.nn.Unfold~ ]], also known as ~im2col~. It extends them to higher-dimensional inputs that are currently not supported.
 
 From the [[https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html][PyTorch docs]]:
