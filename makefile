@@ -5,6 +5,8 @@ help:
 	@echo "        Install unfoldNd and dependencies"
 	@echo "uninstall"
 	@echo "        Unstall unfoldNd"
+	@echo "install-dev"
+	@echo "        Install all development tools"
 	@echo "install-test"
 	@echo "        Install only the testing tools (included in install-dev)"
 	@echo "test"
@@ -38,6 +40,11 @@ install:
 
 uninstall:
 	@pip uninstall unfoldNd
+
+.PHONY: install-dev
+
+install-dev:
+	@pip install -r requirements-dev.txt
 
 .PHONY: install-test
 
