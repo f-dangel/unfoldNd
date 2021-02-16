@@ -34,7 +34,26 @@ This package offers the following functions:
 
 * Performance
 
-There is a continuous benchmark comparing the forward pass run time and peak memory [[https://f-dangel.github.io/unfoldNd-benchmark/][here]]. More settings have to be added to get an understanding how (in)efficiently the numerical trick works.
+There is a continuous benchmark comparing the forward pass run time and peak memory [[https://f-dangel.github.io/unfoldNd-benchmark/][here]]. The settings are:
+
+- "example" :: Configuration used in the [[file:examples/example.py][example]].
+
+- "allcnnc-conv{1,2,3,4,6,7,8}" :: Convolution layers from the All-CNNC on CIFAR-100 with batch size 256, borrowed from [[https://github.com/fsschneider/DeepOBS][DeepOBS]]. Layers 5 and 9 have been removed because they are identical to others in terms of input/output shapes and hyperparameters.
+
+  This is a reasonably large setting where one may want to compute the unfolded input, e.g. for the KFAC approximation.
+
+** Hardware details
+
+The machine running the benchmark has 32GB of RAM with components
+
+- =cpu=: Intel® Core™ i7-8700K CPU @ 3.70GHz × 12
+
+- =cuda=: GeForce RTX 2080 Ti (11GB)
+
+** Early results
+
+- It seems that =unfoldNd= can be faster than the =torch.nn.Unfold= functionality (see [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.time_forward?x-axis=problem&p-device='cuda'][here]], where run time is compared on GPU for a fixed commit) ; but currently requires more memory (see [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.peakmem_forward?x-axis=problem][here]], where peak memory on CPU is shown for the same commit).
+
 
 * Background
 
