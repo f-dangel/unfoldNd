@@ -1,5 +1,7 @@
 """unfoldNd library."""
 
+
+import numpy
 import torch
 from torch.nn.functional import conv1d, conv2d, conv3d
 from torch.nn.modules.utils import _pair, _single, _triple
@@ -132,4 +134,4 @@ def _get_kernel_size_numel(kernel_size):
     if not isinstance(kernel_size, tuple):
         raise ValueError(f"kernel_size must be a tuple. Got {kernel_size}.")
 
-    return int(torch.prod(torch.Tensor(kernel_size)))
+    return numpy.prod(kernel_size)
