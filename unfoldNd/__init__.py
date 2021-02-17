@@ -53,7 +53,7 @@ def unfoldNd(input, kernel_size, dilation=1, padding=0, stride=1):
     # prepare one-hot convolution kernel
     kernel_size = _tuple(kernel_size, N)
     kernel_size_numel = _get_kernel_size_numel(kernel_size)
-    weight = _make_weight(in_channels, kernel_size).to(input.device)
+    weight = _make_weight(in_channels, kernel_size, device=input.device)
 
     unfold = conv(
         input,
@@ -97,14 +97,14 @@ def _raise_dimension_error(N):
     raise ValueError(f"Only 1,2,3-dimensional unfold is supported. Got N={N}.")
 
 
-def _make_weight(in_channels, kernel_size):
+def _make_weight(in_channels, kernel_size, device):
     """Create one-hot convolution kernel. ``kernel_size`` must be an ``N``-tuple."""
     kernel_size_numel = _get_kernel_size_numel(kernel_size)
 
-    weight = torch.zeros(kernel_size_numel, 1, *kernel_size)
+    weight = torch.zeros(kernel_size_numel, 1, *kernel_size, device=device)
 
     for i in range(kernel_size_numel):
-        extraction = torch.zeros(kernel_size_numel)
+        extraction = torch.zeros(kernel_size_numel, device=device)
         extraction[i] = 1.0
         weight[i] = extraction.reshape(1, *kernel_size)
 
