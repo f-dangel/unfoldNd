@@ -12,7 +12,7 @@ From the [[https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html][PyTor
 Currently, only 4-D input tensors (batched image-like tensors) are supported.
 #+end_quote
 
-~unfoldNd~ implements the operation for 3d and 5d inputs. (Note that the 4d implementation can treat 3d inputs by adding a dummy dimension, but cannot handle 5d inputs)
+~unfoldNd~ implements the operation for 3d and 5d inputs and shows good [[id:489186e1-e003-47e6-87df-5266592ff278][performance]].
 
 * Installation
 
@@ -33,8 +33,15 @@ This package offers the following functions:
 - ~unfoldNd.UnfoldNd~ :: Like [[https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html][ ~torch.nn.Unfold~ ]], but supports 3d, 4d, and 5d inputs.
 
 * Performance
+:PROPERTIES:
+:ID:       489186e1-e003-47e6-87df-5266592ff278
+:END:
 
-There is a continuous benchmark comparing the forward pass run time and peak memory [[https://f-dangel.github.io/unfoldNd-benchmark/][here]]. The settings are:
+*TL;DR:* If you are willing to sacrifice a bit of RAM, you can get decent speedups with =unfoldNd= over =torch.nn.Unfold= in both the =forward= and =backward= operations.
+
+---
+
+There is a continuous benchmark comparing the forward pass (and forward-backward pass) run time and peak memory [[https://f-dangel.github.io/unfoldNd-benchmark/][here]]. The settings are:
 
 - "example" :: Configuration used in the [[file:examples/example.py][example]].
 
@@ -50,10 +57,13 @@ The machine running the benchmark has 32GB of RAM with components
 
 - =cuda=: GeForce RTX 2080 Ti (11GB)
 
-** Early results
+** Results
 
-- It seems that =unfoldNd= can be faster than the =torch.nn.Unfold= functionality (see [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.time_forward?x-axis=problem&p-device='cuda'][here]], where run time is compared on GPU for a fixed commit) ; but currently requires more memory (see [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.peakmem_forward?x-axis=problem][here]], where peak memory on CPU is shown for the same commit).
+- Forward pass: =unfoldNd= is faster than =torch.nn.Unfold= in all, except one, benchmarks. The latest commit run time is compared [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.time_forward?x-axis=problem&p-device='cuda'][here]] on GPU, and [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.time_forward?x-axis=problem&p-device='cpu'][here]] on CPU.
 
+- Forward-backward pass: =unfoldNd= is faster than =torch.nn.Unfold= in all benchmarks. The latest commit run time is compared [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.time_backward?x-axis=problem&p-device='cuda'][here]] on GPU, and [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.time_backward?x-axis=problem&p-device='cpu'][here]] on CPU.
+
+- Higher peak memory: The one-hot convolution approach used by =unfoldNd= consistently reaches higher peak memory (see [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.peakmem_forward?x-axis=problem][here]]). The difference to =torch.nn.Unfold= is higher than the one-hot kernel storage; probably the underlying convolution requires additional memory (not confirmed).
 
 * Background
 
