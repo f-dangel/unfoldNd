@@ -61,7 +61,7 @@ The machine running the benchmark has 32GB of RAM with components
 
 - Forward-backward pass: =unfoldNd= is faster than =torch.nn.Unfold= in all benchmarks. The latest commit run time is compared [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.time_backward?x-axis=problem&p-device='cuda'][here]] on GPU, and [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.time_backward?x-axis=problem&p-device='cpu'][here]] on CPU.
 
-- Higher peak memory: The one-hot convolution approach used by =unfoldNd= consistently reaches higher peak memory (see [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.peakmem_forward?x-axis=problem][here]]). The difference to =torch.nn.Unfold= is higher than the one-hot kernel storage; probably the underlying convolution requires additional memory (not confirmed).
+- Higher peak memory: The one-hot convolution approach used by =unfoldNd= consistently reaches higher peak memory (see [[https://f-dangel.github.io/unfoldNd-benchmark/#benchmarks.Suite.peakmem_forward?x-axis=problem][here]]). The difference to =torch.nn.Unfold= cannot be explained by the one-hot kernel storage; probably the underlying =reshape= and convolution require additional memory.
 
 * Background
 
@@ -69,7 +69,7 @@ Convolutions can be expressed as matrix-matrix multiplication between two object
 
 ** The trick
 
-Extracting the input elements that overlap with the kernel can be done by a one-hot kernel of the same dimension, and using group convolutions.
+Extracting the input elements that overlap with the kernel can be done by a one-hot kernel of the same dimension, and using convolutions.
 
 ** Applications
 
