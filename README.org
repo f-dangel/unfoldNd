@@ -69,7 +69,7 @@ Convolutions can be expressed as matrix-matrix multiplication between two object
 
 ** The trick
 
-Extracting the input elements that overlap with the kernel can be done by a one-hot kernel of the same dimension, and using group convolutions.
+Extracting the input elements that overlap with the kernel can be done by a one-hot kernel of the same dimension, and using convolutions.
 
 ** Applications
 
