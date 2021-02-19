@@ -45,7 +45,7 @@ def unfoldNd(input, kernel_size, dilation=1, padding=0, stride=1):
 
     See docs at https://pytorch.org/docs/stable/nn.functional.html.
     """
-    batch_size, in_channels, pixels = input.shape[0], input.shape[1], input.shape[2:]
+    batch_size, in_channels = input.shape[0], input.shape[1]
 
     # get convolution operation
     batch_size_and_in_channels_dims = 2
@@ -55,9 +55,7 @@ def unfoldNd(input, kernel_size, dilation=1, padding=0, stride=1):
     # prepare one-hot convolution kernel
     kernel_size = _tuple(kernel_size, N)
     kernel_size_numel = _get_kernel_size_numel(kernel_size)
-    weight = _make_weight(batch_size, in_channels, kernel_size, device=input.device)
-
-    input = input.reshape(1, batch_size * in_channels, *pixels)
+    weight = _make_weight(in_channels, kernel_size, device=input.device)
 
     unfold = conv(
         input,
@@ -66,7 +64,7 @@ def unfoldNd(input, kernel_size, dilation=1, padding=0, stride=1):
         stride=stride,
         padding=padding,
         dilation=dilation,
-        groups=batch_size * in_channels,
+        groups=in_channels,
     )
 
     return unfold.reshape(batch_size, in_channels * kernel_size_numel, -1)
@@ -101,26 +99,28 @@ def _raise_dimension_error(N):
     raise ValueError(f"Only 1,2,3-dimensional unfold is supported. Got N={N}.")
 
 
-def _make_weight(batch_size, in_channels, kernel_size, device):
+def _make_weight(in_channels, kernel_size, device):
     """Create one-hot convolution kernel. ``kernel_size`` must be an ``N``-tuple.
 
     Details:
         Let ``T`` denote the one-hot weight, then
-        ``T[n * c * i, 0, j] = δᵢⱼ ∀ c = 1, ..., C_in; n = 1, ..., N``
+        ``T[c * i, 0, j] = δᵢⱼ ∀ c = 1, ... C_in``
         (``j`` is a group index of the ``Kᵢ``).
 
         This can be done by building diagonals ``D[i, j] = δᵢⱼ``, reshaping
-        them into ``[∏ᵢ Kᵢ, 1, K]``, and repeat them ``C_in * N`` times along the
+        them into ``[∏ᵢ Kᵢ, 1, K]``, and repeat them ``C_in`` times along the
         leading dimension.
 
     Returns:
-        torch.Tensor : A tensor of shape ``[ N * C_in * ∏ᵢ Kᵢ, 1, K]`` where
+        torch.Tensor : A tensor of shape ``[ C_in * ∏ᵢ Kᵢ, 1, K]`` where
             ``K = (K₁, K₂, ..., Kₙ)`` is the kernel size. Filter groups are
             one-hot such that they effectively extract one element of the patch
             the kernel currently overlaps with.
+
+
     """
     kernel_size_numel = _get_kernel_size_numel(kernel_size)
-    repeat = [batch_size * in_channels, 1] + [1 for _ in kernel_size]
+    repeat = [in_channels, 1] + [1 for _ in kernel_size]
 
     return (
         torch.eye(kernel_size_numel, device=device)
