@@ -16,10 +16,8 @@ Currently, only 4-D input tensors (batched image-like tensors) are supported.
 
 * Installation
 
-You can install the package from this repository. Use
-
 #+begin_src python
-  pip install --user git+https://github.com/f-dangel/unfoldNd.git
+  pip install --user unfoldNd
 #+end_src
 
 * Usage
