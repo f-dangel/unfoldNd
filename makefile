@@ -96,3 +96,4 @@ conda-env:
 
 examples:
 	@python examples/example.py
+	@python examples/example_fold.py
