@@ -10,7 +10,12 @@ def _get_kernel_size_numel(kernel_size):
     if not isinstance(kernel_size, tuple):
         raise ValueError(f"kernel_size must be a tuple. Got {kernel_size}.")
 
-    return numpy.prod(kernel_size)
+    return _get_numel_from_shape(kernel_size)
+
+
+def _get_numel_from_shape(shape_tuple):
+    """Compute number of elements from shape."""
+    return int(numpy.prod(shape_tuple))
 
 
 def _tuple(kernel_size, N):
