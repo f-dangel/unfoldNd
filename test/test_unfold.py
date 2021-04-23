@@ -1,6 +1,6 @@
-"""Tests for unfoldNd/__init__.py."""
+"""Tests for ``unfoldNd/unfold.py.``"""
 
-from test.settings import (
+from test.unfold_settings import (
     DEVICES,
     DEVICES_ID,
     PROBLEMS_1D,
@@ -9,10 +9,6 @@ from test.settings import (
     PROBLEMS_2D_IDS,
     PROBLEMS_3D,
     PROBLEMS_3D_IDS,
-    UNSUPPORTED_KERNEL_SIZE,
-    UNSUPPORTED_KERNEL_SIZE_IDS,
-    UNSUPPORTED_N,
-    UNSUPPORTED_N_IDS,
 )
 from test.utils import _conv_unfold
 
@@ -98,28 +94,3 @@ def test_Unfold3d_vs_Conv3d(problem, device):
     result = _conv_unfold(inputs, unfolded_inputs, conv3d_module)
 
     assert torch.allclose(torch_result, result, atol=5e-7)
-
-
-@pytest.mark.parametrize("N", UNSUPPORTED_N, ids=UNSUPPORTED_N_IDS)
-def test__tuple_raise_dimension_error(N):
-    """Only N=1,2,3 are supported."""
-    dummy_kernel_size = None
-
-    with pytest.raises(ValueError):
-        unfoldNd._tuple(dummy_kernel_size, N)
-
-
-@pytest.mark.parametrize("N", UNSUPPORTED_N, ids=UNSUPPORTED_N_IDS)
-def test__get_conv_raise_dimension_error(N):
-    """Only N=1,2,3 are supported."""
-    with pytest.raises(ValueError):
-        unfoldNd._get_conv(N)
-
-
-@pytest.mark.parametrize(
-    "kernel_size", UNSUPPORTED_KERNEL_SIZE, ids=UNSUPPORTED_KERNEL_SIZE_IDS
-)
-def test__get_kernel_size_numel_raise_value_error(kernel_size):
-    """``kernel_size`` must be an ``N``-tuple."""
-    with pytest.raises(ValueError):
-        unfoldNd._get_kernel_size_numel(kernel_size)
