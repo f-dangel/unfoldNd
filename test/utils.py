@@ -5,7 +5,13 @@ import torch
 
 def make_id(problem):
     """Convert problem description in to human-readable id."""
-    key_value_strs = [f"{key}={value}" for key, value in problem.items()]
+    key_value_strs = []
+
+    for key, value in problem.items():
+        if key == "input_fn":
+            key_value_strs.append(f"input_shape={value().shape}")
+        else:
+            key_value_strs.append(f"{key}={value}")
 
     return ",".join(key_value_strs).replace(" ", "")
 
