@@ -1,6 +1,7 @@
 """Utility functions for testing ``unfoldNd``."""
 
 import torch
+from torch.nn.modules.utils import _pair
 
 
 def make_id(problem):
@@ -57,3 +58,17 @@ def _conv_unfold(inputs, unfolded_input, conv_module):
     result = torch.einsum("gocx,ngcxh->ngoh", weight_matrix, unfolded_input)
 
     return result.reshape(N, C_out, *spatial_out_size)
+
+
+def _add_dummy_dim(unfold_kwargs, inputs):
+    """Add dummy dimension to unfold hyperparameters and input."""
+    new_inputs = inputs.unsqueeze(-1)
+
+    new_kwargs = {}
+
+    for key, value in unfold_kwargs.items():
+        dummy = (0,) if key == "padding" else (1,)
+        new_value = _pair(value)[:-1] + dummy
+        new_kwargs[key] = new_value
+
+    return new_kwargs, new_inputs

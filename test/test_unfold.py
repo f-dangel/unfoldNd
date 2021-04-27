@@ -10,11 +10,10 @@ from test.unfold_settings import (
     PROBLEMS_3D,
     PROBLEMS_3D_IDS,
 )
-from test.utils import _conv_unfold
+from test.utils import _add_dummy_dim, _conv_unfold
 
 import pytest
 import torch
-from torch.nn.modules.utils import _pair
 
 import unfoldNd
 
@@ -46,19 +45,6 @@ def test_Unfold1d_vs_dummy_dim_Unfold(problem, device):
 
     torch.manual_seed(seed)
     inputs = torch.rand(input_shape).to(device)
-
-    def _add_dummy_dim(unfold_kwargs, inputs):
-        """Add dummy dimension to unfold hyperparameters and input."""
-        new_inputs = inputs.unsqueeze(-1)
-
-        new_kwargs = {}
-
-        for key, value in unfold_kwargs.items():
-            dummy = (0,) if key == "padding" else (1,)
-            new_value = _pair(value)[:-1] + dummy
-            new_kwargs[key] = new_value
-
-        return new_kwargs, new_inputs
 
     unfold_kwargs_dummy_dim, inputs_dummy_dim = _add_dummy_dim(unfold_kwargs, inputs)
     result_torch = torch.nn.Unfold(**unfold_kwargs_dummy_dim).to(device)(
