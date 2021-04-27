@@ -6,7 +6,7 @@ from torch.nn.modules.utils import _pair, _single, _triple
 
 
 def _get_kernel_size_numel(kernel_size):
-    """Determine number of pixels/voxels. ``kernel_size`` must be an ``N``-tuple. """
+    """Determine number of pixels/voxels. ``kernel_size`` must be an ``N``-tuple."""
     if not isinstance(kernel_size, tuple):
         raise ValueError(f"kernel_size must be a tuple. Got {kernel_size}.")
 
