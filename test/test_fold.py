@@ -21,10 +21,10 @@ def test_Fold2d_vs_Fold(problem, device):
     torch.manual_seed(seed)
     inputs = torch.rand(input_shape).to(device)
 
-    result = unfoldNd.FoldNd(**fold_kwargs).to(device)(inputs)
     result_torch = torch.nn.Fold(**fold_kwargs).to(device)(inputs)
+    result_lib = unfoldNd.FoldNd(**fold_kwargs).to(device)(inputs)
 
-    assert torch.allclose(result, result_torch)
+    assert torch.allclose(result_lib, result_torch)
 
 
 @pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
