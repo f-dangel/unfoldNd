@@ -1,6 +1,13 @@
 """Tests for ``unfoldNd/fold.py.`` (fold functionality)."""
 
-from test.fold_settings import DEVICES, DEVICES_ID, PROBLEMS_2D, PROBLEMS_2D_IDS
+from test.fold_settings import (
+    DEVICES,
+    DEVICES_ID,
+    PROBLEMS_2D,
+    PROBLEMS_2D_IDS,
+    PROBLEMS_INVERSE,
+    PROBLEMS_INVERSE_IDS,
+)
 from test.unfold_settings import PROBLEMS_1D as UNFOLD_PROBLEMS_1D
 from test.unfold_settings import PROBLEMS_1D_IDS as UNFOLD_PROBLEMS_1D_IDS
 from test.unfold_settings import PROBLEMS_2D as UNFOLD_PROBLEMS_2D
@@ -88,3 +95,27 @@ def test_Fold1d_vs_Fold_after_dummy_dim_Unfold(problem, device):
     result_lib = unfoldNd.FoldNd(output_size, **fold_kwargs).to(device)(inputs)
 
     assert torch.allclose(result_lib, result_torch)
+
+
+@pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
+@pytest.mark.parametrize("problem", PROBLEMS_INVERSE, ids=PROBLEMS_INVERSE_IDS)
+def test_Fold_inverse_of_Unfold(problem, device):
+    """Compare that folding is the inverse of unfolding on 3d/4d/5d inputs.
+
+    This relation only holds if every pixel/voxel is used exactly once, i.e.
+    patches don't overlap and cover the entire image/volume.
+    """
+    seed = problem["seed"]
+    input_shape = problem["input_shape"]
+    unfold_kwargs = problem["unfold_kwargs"]
+
+    torch.manual_seed(seed)
+    inputs = torch.rand(input_shape).to(device)
+    unfolded = unfoldNd.unfoldNd(inputs, **unfold_kwargs)
+
+    fold_kwargs = problem["unfold_kwargs"]
+    output_size = input_shape[2:]
+
+    folded = unfoldNd.FoldNd(output_size, **fold_kwargs).to(device)(unfolded)
+
+    assert torch.allclose(inputs, folded)
