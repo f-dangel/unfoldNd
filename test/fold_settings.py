@@ -17,6 +17,35 @@ PROBLEMS_2D = [
 ]
 PROBLEMS_2D_IDS = [make_id(problem) for problem in PROBLEMS_2D]
 
+
+PRECISION_PROBLEMS_2D = [
+    # out-of-bounds error because float index is rounded up
+    {
+        "seed": 0,
+        "input_shape": (1, 1 * 2 * 2, 25),
+        "fold_kwargs": {
+            # > smallest int which is exact as float32, 2 ** 24 = 116777217
+            # (see https://stackoverflow.com/q/27207149 for details)
+            "output_size": (2 ** 12 + 2, 2 ** 12 + 2),
+            "kernel_size": (2, 2),
+            "stride": 2 ** 10,
+        },
+    },
+    # wrong result due to wrong float → long conversion
+    {
+        "seed": 0,
+        "input_shape": (1, 1 * 2 * 2, 25),
+        "fold_kwargs": {
+            # > smallest int which is exact as float32, 2 ** 24 = 116777217
+            # (see https://stackoverflow.com/q/27207149 for details)
+            "output_size": (5000, 5000),
+            "kernel_size": (2, 2),
+            "stride": 1000,
+        },
+    },
+]
+PRECISION_PROBLEMS_2D_IDS = [make_id(problem) for problem in PRECISION_PROBLEMS_2D]
+
 # Settings must satisfy ``fold(unfold(input)) = input``
 PROBLEMS_INVERSE = [
     # 1d basic
