@@ -31,11 +31,11 @@ import unfoldNd
 def test_FoldNd_unsupported_args(problem, device):
     """Check unsupported arguments of ``FoldNd``."""
     seed = problem["seed"]
-    input_shape = problem["input_shape"]
+    input_fn = problem["input_fn"]
     fold_kwargs = problem["fold_kwargs"]
 
     torch.manual_seed(seed)
-    inputs = torch.rand(input_shape).to(device)
+    inputs = input_fn().to(device)
 
     with pytest.raises(ValueError):
         _ = unfoldNd.FoldNd(**fold_kwargs).to(device)(inputs)
@@ -46,11 +46,11 @@ def test_FoldNd_unsupported_args(problem, device):
 def test_Fold2d_vs_Fold(problem, device):
     """Compare with ``torch.nn.Fold`` for a 4d input."""
     seed = problem["seed"]
-    input_shape = problem["input_shape"]
+    input_fn = problem["input_fn"]
     fold_kwargs = problem["fold_kwargs"]
 
     torch.manual_seed(seed)
-    inputs = torch.rand(input_shape).to(device)
+    inputs = input_fn().to(device)
 
     result_torch = torch.nn.Fold(**fold_kwargs).to(device)(inputs)
     result_lib = unfoldNd.FoldNd(**fold_kwargs).to(device)(inputs)
@@ -65,11 +65,11 @@ def test_Fold2d_vs_Fold(problem, device):
 def test_Fold2d_vs_Fold_precision(problem, device):
     """Catch expected shortcomings of ``FoldNd`` caused by unfolding float indices."""
     seed = problem["seed"]
-    input_shape = problem["input_shape"]
+    input_fn = problem["input_fn"]
     fold_kwargs = problem["fold_kwargs"]
 
     torch.manual_seed(seed)
-    inputs = torch.rand(input_shape).to(device)
+    inputs = input_fn().to(device)
 
     _ = torch.nn.Fold(**fold_kwargs).to(device)(inputs)
 
@@ -85,16 +85,15 @@ def test_Fold2d_vs_Fold_after_Unfold(problem, device):
     Generate settings from unfold tests.
     """
     seed = problem["seed"]
-    input_shape = problem["input_shape"]
+    input_fn = problem["input_fn"]
     unfold_kwargs = problem["unfold_kwargs"]
 
     torch.manual_seed(seed)
-    inputs = torch.nn.functional.unfold(
-        torch.rand(input_shape).to(device), **unfold_kwargs
-    )
+    unfold_input = input_fn().to(device)
+    inputs = torch.nn.functional.unfold(unfold_input, **unfold_kwargs)
 
     fold_kwargs = problem["unfold_kwargs"]
-    output_size = input_shape[2:]
+    output_size = unfold_input.shape[2:]
 
     result_torch = torch.nn.Fold(output_size, **fold_kwargs).to(device)(inputs)
     result_lib = unfoldNd.FoldNd(output_size, **fold_kwargs).to(device)(inputs)
@@ -111,11 +110,11 @@ def test_Fold1d_vs_Fold_after_dummy_dim_Unfold(problem, device):
     compatibility with ``torch.nn.Unfold``.
     """
     seed = problem["seed"]
-    input_shape = problem["input_shape"]
+    input_fn = problem["input_fn"]
     unfold_kwargs = problem["unfold_kwargs"]
 
     torch.manual_seed(seed)
-    unfold_inputs = torch.rand(input_shape).to(device)
+    unfold_inputs = input_fn().to(device)
 
     unfold_kwargs_dummy_dim, inputs_dummy_dim = _add_dummy_dim(
         unfold_kwargs, unfold_inputs
@@ -131,7 +130,7 @@ def test_Fold1d_vs_Fold_after_dummy_dim_Unfold(problem, device):
     )
 
     fold_kwargs = problem["unfold_kwargs"]
-    output_size = input_shape[2:]
+    output_size = unfold_inputs.shape[2:]
     result_lib = unfoldNd.FoldNd(output_size, **fold_kwargs).to(device)(inputs)
 
     assert torch.allclose(result_lib, result_torch)
@@ -146,15 +145,15 @@ def test_Fold_inverse_of_Unfold(problem, device):
     patches don't overlap and cover the entire image/volume.
     """
     seed = problem["seed"]
-    input_shape = problem["input_shape"]
+    input_fn = problem["input_fn"]
     unfold_kwargs = problem["unfold_kwargs"]
 
     torch.manual_seed(seed)
-    inputs = torch.rand(input_shape).to(device)
+    inputs = input_fn().to(device)
     unfolded = unfoldNd.unfoldNd(inputs, **unfold_kwargs)
 
     fold_kwargs = problem["unfold_kwargs"]
-    output_size = input_shape[2:]
+    output_size = inputs.shape[2:]
 
     folded = unfoldNd.FoldNd(output_size, **fold_kwargs).to(device)(unfolded)
 
