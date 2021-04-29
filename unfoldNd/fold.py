@@ -52,6 +52,8 @@ def foldNd(input, output_size, kernel_size, dilation=1, padding=0, stride=1):
     Raises:
         ValueError: If ``output_size`` is not specified as ``tuple``. Otherwise
             the fold dimension ``N`` cannot be inferred.
+        RuntimeError: If the output has more entries than can be exactly represented
+            with ``float32`` and the implementation's correctness breaks down.
     """
     device = input.device
 
@@ -68,23 +70,31 @@ def foldNd(input, output_size, kernel_size, dilation=1, padding=0, stride=1):
     in_channels_kernel_size_numel = input.shape[1]
     in_channels = in_channels_kernel_size_numel // kernel_size_numel
 
-    # NOTE unfolding acts on float tensors. Special attention has to be paid if the
-    # arange exceeds the smallest integer that cannot be represented as float32
-    # (see https://stackoverflow.com/q/27207149 for details)
-    # TODO Use float64 if float32 cannot represent output_size_numel
+    _check_output_size(output_size_numel)
     idx = torch.arange(output_size_numel, dtype=torch.float32, device=device).reshape(
         1, 1, *output_size
     )
-    idx_unfold = unfoldNd(
-        idx, kernel_size, dilation=dilation, padding=padding, stride=stride
-    )
+    idx = unfoldNd(idx, kernel_size, dilation=dilation, padding=padding, stride=stride)
 
     input = input.reshape(batch_size, in_channels, -1)
-    idx_unfold = idx_unfold.reshape(1, 1, -1).long().expand(batch_size, in_channels, -1)
+    idx = idx.reshape(1, 1, -1).long().expand(batch_size, in_channels, -1)
 
     output = torch.zeros(
         batch_size, in_channels, output_size_numel, device=device, dtype=input.dtype
     )
-    output.scatter_add_(2, idx_unfold, input)
+    output.scatter_add_(2, idx, input)
 
     return output.reshape(batch_size, in_channels, *output_size)
+
+
+def _check_output_size(output_size_numel):
+    """Raise exception if output size has more elements than float32 can represent."""
+    # arg min long(float32(x)) != x,  see https://stackoverflow.com/q/27207149
+    num_bits_mantissa = 23
+    min_int_inexact_as_float32 = 2 ** (num_bits_mantissa + 1) + 1
+
+    if output_size_numel >= min_int_inexact_as_float32:
+        raise RuntimeError(
+            f"Output size elements({output_size_numel})"
+            + f" must be smaller than {min_int_inexact_as_float32}"
+        )

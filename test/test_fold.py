@@ -44,11 +44,7 @@ def test_Fold2d_vs_Fold(problem, device):
     "problem", PRECISION_PROBLEMS_2D, ids=PRECISION_PROBLEMS_2D_IDS
 )
 def test_Fold2d_vs_Fold_precision(problem, device):
-    """Catch expected shortcomings of ``FoldNd`` caused by unfolding float indices.
-
-    ``FoldNd`` should yield the incorrect result or crash because of invalid unfolded
-    indices that are ``scatter_add``ed.
-    """
+    """Catch expected shortcomings of ``FoldNd`` caused by unfolding float indices."""
     seed = problem["seed"]
     input_shape = problem["input_shape"]
     fold_kwargs = problem["fold_kwargs"]
@@ -56,16 +52,10 @@ def test_Fold2d_vs_Fold_precision(problem, device):
     torch.manual_seed(seed)
     inputs = torch.rand(input_shape).to(device)
 
-    result_torch = torch.nn.Fold(**fold_kwargs).to(device)(inputs)
+    _ = torch.nn.Fold(**fold_kwargs).to(device)(inputs)
 
-    runtime_exception = False
-    try:
-        result_lib = unfoldNd.FoldNd(**fold_kwargs).to(device)(inputs)
-    except RuntimeError:
-        runtime_exception = True
-
-    if not runtime_exception:
-        assert not torch.allclose(result_lib, result_torch)
+    with pytest.raises(RuntimeError):
+        _ = unfoldNd.FoldNd(**fold_kwargs).to(device)(inputs)
 
 
 @pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
