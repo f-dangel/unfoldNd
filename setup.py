@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 setup(
     author="Felix Dangel",
     name="unfoldNd",
-    version="0.0.1",
+    version="0.1.0",
     description="N-dimensional unfold in PyTorch",
     long_description="N-dimensional unfold in PyTorch using one-hot convolution",
     long_description_content_type="text/markdown",
