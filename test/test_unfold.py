@@ -23,11 +23,11 @@ import unfoldNd
 def test_Unfold2d_vs_Unfold(problem, device):
     """Compare with ``torch.nn.Unfold`` for a 4d input."""
     seed = problem["seed"]
-    input_shape = problem["input_shape"]
+    input_fn = problem["input_fn"]
     unfold_kwargs = problem["unfold_kwargs"]
 
     torch.manual_seed(seed)
-    inputs = torch.rand(input_shape).to(device)
+    inputs = input_fn().to(device)
 
     result_torch = torch.nn.Unfold(**unfold_kwargs).to(device)(inputs)
     result_lib = unfoldNd.UnfoldNd(**unfold_kwargs).to(device)(inputs)
@@ -40,11 +40,11 @@ def test_Unfold2d_vs_Unfold(problem, device):
 def test_Unfold1d_vs_dummy_dim_Unfold(problem, device):
     """Compare with ``torch.nn.Unfold`` for a 3d input (adding a dummy dimension)."""
     seed = problem["seed"]
-    input_shape = problem["input_shape"]
+    input_fn = problem["input_fn"]
     unfold_kwargs = problem["unfold_kwargs"]
 
     torch.manual_seed(seed)
-    inputs = torch.rand(input_shape).to(device)
+    inputs = input_fn().to(device)
 
     unfold_kwargs_dummy_dim, inputs_dummy_dim = _add_dummy_dim(unfold_kwargs, inputs)
     result_torch = torch.nn.Unfold(**unfold_kwargs_dummy_dim).to(device)(
@@ -63,13 +63,13 @@ def test_Unfold3d_vs_Conv3d(problem, device):
     Use unfolded input in convolution with matrix-view kernel, compare with Conv3d.
     """
     seed = problem["seed"]
-    input_shape = problem["input_shape"]
+    input_fn = problem["input_fn"]
     unfold_kwargs = problem["unfold_kwargs"]
     out_channels = problem["out_channels"]
-    in_channels = input_shape[1]
+    in_channels = input_fn().shape[1]
 
     torch.manual_seed(seed)
-    inputs = torch.rand(input_shape).to(device)
+    inputs = input_fn().to(device)
 
     conv3d_module = torch.nn.Conv3d(
         in_channels, out_channels, **unfold_kwargs, bias=False
