@@ -61,7 +61,7 @@ def foldNd(input, output_size, kernel_size, dilation=1, padding=0, stride=1):
         N = len(output_size)
         output_size_numel = _get_numel_from_shape(output_size)
     else:
-        raise ValueError(f"Expect 'output_size' to be tuple. Got {type(output_size)}")
+        raise ValueError(f"'output_size' must be tuple. Got {type(output_size)}.")
 
     kernel_size = _tuple(kernel_size, N)
     kernel_size_numel = _get_kernel_size_numel(kernel_size)

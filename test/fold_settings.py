@@ -17,6 +17,20 @@ PROBLEMS_2D = [
 ]
 PROBLEMS_2D_IDS = [make_id(problem) for problem in PROBLEMS_2D]
 
+UNSUPPORTED_ARGS_PROBLEMS = [
+    # output size is integer
+    {
+        "seed": 0,
+        "input_shape": (2, 3 * 2 * 2, 12),
+        "fold_kwargs": {
+            "output_size": 4,
+            "kernel_size": (2, 2),
+        },
+    },
+]
+UNSUPPORTED_ARGS_PROBLEMS_IDS = [
+    make_id(problem) for problem in UNSUPPORTED_ARGS_PROBLEMS
+]
 
 PRECISION_PROBLEMS_2D = [
     # out-of-bounds error because float index is rounded up

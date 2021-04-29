@@ -9,6 +9,8 @@ from test.fold_settings import (
     PROBLEMS_2D_IDS,
     PROBLEMS_INVERSE,
     PROBLEMS_INVERSE_IDS,
+    UNSUPPORTED_ARGS_PROBLEMS,
+    UNSUPPORTED_ARGS_PROBLEMS_IDS,
 )
 from test.unfold_settings import PROBLEMS_1D as UNFOLD_PROBLEMS_1D
 from test.unfold_settings import PROBLEMS_1D_IDS as UNFOLD_PROBLEMS_1D_IDS
@@ -20,6 +22,23 @@ import pytest
 import torch
 
 import unfoldNd
+
+
+@pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
+@pytest.mark.parametrize(
+    "problem", UNSUPPORTED_ARGS_PROBLEMS, ids=UNSUPPORTED_ARGS_PROBLEMS_IDS
+)
+def test_FoldNd_unsupported_args(problem, device):
+    """Check unsupported arguments of ``FoldNd``."""
+    seed = problem["seed"]
+    input_shape = problem["input_shape"]
+    fold_kwargs = problem["fold_kwargs"]
+
+    torch.manual_seed(seed)
+    inputs = torch.rand(input_shape).to(device)
+
+    with pytest.raises(ValueError):
+        _ = unfoldNd.FoldNd(**fold_kwargs).to(device)(inputs)
 
 
 @pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
