@@ -36,7 +36,7 @@ def unfoldNd(input, kernel_size, dilation=1, padding=0, stride=1):
     """Extracts sliding local blocks from a batched input tensor. Also known as im2col.
 
     Pytorch functional that accepts 3d, 4d, and 5d tensors. Acts like
-    ``torch.nn.functional.unfold for a 4d input. Uses one-hot convolution under the
+    ``torch.nn.functional.unfold`` for a 4d input. Uses one-hot convolution under the
     hood.
 
     See docs at https://pytorch.org/docs/stable/nn.functional.html.
