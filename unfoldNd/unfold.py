@@ -39,7 +39,7 @@ def unfoldNd(input, kernel_size, dilation=1, padding=0, stride=1):
     ``torch.nn.functional.unfold`` for a 4d input. Uses one-hot convolution under the
     hood.
 
-    See docs at https://pytorch.org/docs/stable/nn.functional.html.
+    See docs at https://pytorch.org/docs/stable/nn.functional.html#unfold.
     """
     batch_size, in_channels = input.shape[0], input.shape[1]
 

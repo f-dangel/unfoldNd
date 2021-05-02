@@ -46,8 +46,7 @@ def foldNd(input, output_size, kernel_size, dilation=1, padding=0, stride=1):
     ``torch.nn.functional.fold`` for a 4d input. Unfolds an index tensor to scatter
     sliding blocks to the result.
 
-    See docs at
-    https://pytorch.org/docs/master/generated/torch.nn.functional.fold.html.
+    See docs at https://pytorch.org/docs/stable/nn.functional.html#fold.
 
     Raises:
         ValueError: If ``output_size`` is not specified as ``tuple``. Otherwise
