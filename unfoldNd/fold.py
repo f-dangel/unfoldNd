@@ -43,7 +43,7 @@ def foldNd(input, output_size, kernel_size, dilation=1, padding=0, stride=1):
     Also known as col2im.
 
     Pytorch functional that accepts 3d, 4d, and 5d tensors. Acts like
-    ``torch.nn.functional.fold for a 4d input. Unfolds an index tensor to scatter
+    ``torch.nn.functional.fold`` for a 4d input. Unfolds an index tensor to scatter
     sliding blocks to the result.
 
     See docs at
