@@ -16,6 +16,8 @@ from test.unfold_settings import PROBLEMS_1D as UNFOLD_PROBLEMS_1D
 from test.unfold_settings import PROBLEMS_1D_IDS as UNFOLD_PROBLEMS_1D_IDS
 from test.unfold_settings import PROBLEMS_2D as UNFOLD_PROBLEMS_2D
 from test.unfold_settings import PROBLEMS_2D_IDS as UNFOLD_PROBLEMS_2D_IDS
+from test.unfold_settings import PROBLEMS_3D as UNFOLD_PROBLEMS_3D
+from test.unfold_settings import PROBLEMS_3D_IDS as UNFOLD_PROBLEMS_3D_IDS
 from test.utils import _add_dummy_dim
 
 import pytest
@@ -158,3 +160,38 @@ def test_Fold_inverse_of_Unfold(problem, device):
     folded = unfoldNd.FoldNd(output_size, **fold_kwargs).to(device)(unfolded)
 
     assert torch.allclose(inputs, folded)
+
+
+@pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
+@pytest.mark.parametrize(
+    "problem",
+    UNFOLD_PROBLEMS_1D + UNFOLD_PROBLEMS_2D + UNFOLD_PROBLEMS_3D,
+    ids=UNFOLD_PROBLEMS_1D_IDS + UNFOLD_PROBLEMS_2D_IDS + UNFOLD_PROBLEMS_3D_IDS,
+)
+def test_FoldNd_divisor(problem, device):
+    """Test divisor tensor from ``fold-unfold`` composition.
+
+    According to https://pytorch.org/docs/stable/generated/torch.nn.Fold.html the
+    divisor between an input tensor and the result of an unfold-fold composition
+    is satisfies ``fold(unfold(input)) == divisor * input`` with
+    ``input_ones = torch.ones(input.shape, dtype=input.dtype)`` and
+    ``divisor = fold(unfold(input_ones))``
+    """
+    seed = problem["seed"]
+    input_fn = problem["input_fn"]
+    unfold_kwargs = problem["unfold_kwargs"]
+
+    torch.manual_seed(seed)
+    inputs = input_fn().to(device)
+    inputs_ones = torch.ones(inputs.shape, dtype=inputs.dtype).to(device)
+
+    unfold_module = unfoldNd.UnfoldNd(**unfold_kwargs).to(device)
+
+    fold_kwargs = problem["unfold_kwargs"]
+    output_size = inputs.shape[2:]
+    fold_module = unfoldNd.FoldNd(output_size, **fold_kwargs).to(device)
+
+    divisor = fold_module(unfold_module(inputs_ones))
+    outputs = fold_module(unfold_module(inputs))
+
+    assert torch.allclose(outputs, divisor * inputs)
