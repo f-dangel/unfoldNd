@@ -1,6 +1,6 @@
-"""Tests for unfoldNd/__init__.py."""
+"""Tests for ``unfoldNd/unfold.py.``"""
 
-from test.settings import (
+from test.unfold_settings import (
     DEVICES,
     DEVICES_ID,
     PROBLEMS_1D,
@@ -9,16 +9,11 @@ from test.settings import (
     PROBLEMS_2D_IDS,
     PROBLEMS_3D,
     PROBLEMS_3D_IDS,
-    UNSUPPORTED_KERNEL_SIZE,
-    UNSUPPORTED_KERNEL_SIZE_IDS,
-    UNSUPPORTED_N,
-    UNSUPPORTED_N_IDS,
 )
-from test.utils import _conv_unfold
+from test.utils import _add_dummy_dim, _conv_unfold
 
 import pytest
 import torch
-from torch.nn.modules.utils import _pair
 
 import unfoldNd
 
@@ -34,10 +29,10 @@ def test_Unfold2d_vs_Unfold(problem, device):
     torch.manual_seed(seed)
     inputs = input_fn().to(device)
 
-    result = unfoldNd.UnfoldNd(**unfold_kwargs).to(device)(inputs)
     result_torch = torch.nn.Unfold(**unfold_kwargs).to(device)(inputs)
+    result_lib = unfoldNd.UnfoldNd(**unfold_kwargs).to(device)(inputs)
 
-    assert torch.allclose(result, result_torch)
+    assert torch.allclose(result_lib, result_torch)
 
 
 @pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
@@ -51,27 +46,14 @@ def test_Unfold1d_vs_dummy_dim_Unfold(problem, device):
     torch.manual_seed(seed)
     inputs = input_fn().to(device)
 
-    result = unfoldNd.UnfoldNd(**unfold_kwargs).to(device)(inputs)
-
-    def _add_dummy_dim(unfold_kwargs, inputs):
-        """Add dummy dimension to unfold hyperparameters and input."""
-        new_inputs = inputs.unsqueeze(-1)
-
-        new_kwargs = {}
-
-        for key, value in unfold_kwargs.items():
-            dummy = (0,) if key == "padding" else (1,)
-            new_value = _pair(value)[:-1] + dummy
-            new_kwargs[key] = new_value
-
-        return new_kwargs, new_inputs
-
     unfold_kwargs_dummy_dim, inputs_dummy_dim = _add_dummy_dim(unfold_kwargs, inputs)
     result_torch = torch.nn.Unfold(**unfold_kwargs_dummy_dim).to(device)(
         inputs_dummy_dim
     )
 
-    assert torch.allclose(result, result_torch)
+    result_lib = unfoldNd.UnfoldNd(**unfold_kwargs).to(device)(inputs)
+
+    assert torch.allclose(result_lib, result_torch)
 
 
 @pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
@@ -95,31 +77,6 @@ def test_Unfold3d_vs_Conv3d(problem, device):
     torch_result = conv3d_module(inputs)
 
     unfolded_inputs = unfoldNd.UnfoldNd(**unfold_kwargs).to(device)(inputs)
-    result = _conv_unfold(inputs, unfolded_inputs, conv3d_module)
+    result_lib = _conv_unfold(inputs, unfolded_inputs, conv3d_module)
 
-    assert torch.allclose(torch_result, result, atol=5e-7)
-
-
-@pytest.mark.parametrize("N", UNSUPPORTED_N, ids=UNSUPPORTED_N_IDS)
-def test__tuple_raise_dimension_error(N):
-    """Only N=1,2,3 are supported."""
-    dummy_kernel_size = None
-
-    with pytest.raises(ValueError):
-        unfoldNd._tuple(dummy_kernel_size, N)
-
-
-@pytest.mark.parametrize("N", UNSUPPORTED_N, ids=UNSUPPORTED_N_IDS)
-def test__get_conv_raise_dimension_error(N):
-    """Only N=1,2,3 are supported."""
-    with pytest.raises(ValueError):
-        unfoldNd._get_conv(N)
-
-
-@pytest.mark.parametrize(
-    "kernel_size", UNSUPPORTED_KERNEL_SIZE, ids=UNSUPPORTED_KERNEL_SIZE_IDS
-)
-def test__get_kernel_size_numel_raise_value_error(kernel_size):
-    """``kernel_size`` must be an ``N``-tuple."""
-    with pytest.raises(ValueError):
-        unfoldNd._get_kernel_size_numel(kernel_size)
+    assert torch.allclose(torch_result, result_lib, atol=5e-7)
