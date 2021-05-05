@@ -108,6 +108,14 @@ PROBLEMS_2D = [
             "stride": 2,
         },
     },
+    {
+        "seed": 0,
+        "input_fn": lambda: torch.rand(2, 3, 50, 40, dtype=torch.float64),
+        "unfold_kwargs": {
+            "kernel_size": 1,
+        },
+        "id": "bug-float-64-input",
+    },
 ]
 PROBLEMS_2D_IDS = [make_id(problem) for problem in PROBLEMS_2D]
 

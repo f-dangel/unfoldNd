@@ -51,7 +51,7 @@ def unfoldNd(input, kernel_size, dilation=1, padding=0, stride=1):
     # prepare one-hot convolution kernel
     kernel_size = _tuple(kernel_size, N)
     kernel_size_numel = _get_kernel_size_numel(kernel_size)
-    weight = _make_weight(in_channels, kernel_size, input.device)
+    weight = _make_weight(in_channels, kernel_size, input.device, input.dtype)
 
     unfold = conv(
         input,
@@ -66,7 +66,7 @@ def unfoldNd(input, kernel_size, dilation=1, padding=0, stride=1):
     return unfold.reshape(batch_size, in_channels * kernel_size_numel, -1)
 
 
-def _make_weight(in_channels, kernel_size, device):
+def _make_weight(in_channels, kernel_size, device, dtype):
     """Create one-hot convolution kernel. ``kernel_size`` must be an ``N``-tuple.
 
     Details:
@@ -90,7 +90,7 @@ def _make_weight(in_channels, kernel_size, device):
     repeat = [in_channels, 1] + [1 for _ in kernel_size]
 
     return (
-        torch.eye(kernel_size_numel, device=device)
+        torch.eye(kernel_size_numel, device=device, dtype=dtype)
         .reshape((kernel_size_numel, 1, *kernel_size))
         .repeat(*repeat)
     )
