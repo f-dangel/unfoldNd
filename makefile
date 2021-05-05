@@ -37,8 +37,7 @@ help:
 .PHONY: install
 
 install:
-	@pip install -r requirements.txt
-	@pip install .
+	@pip install -e .
 
 .PHONY: uninstall
 
@@ -48,12 +47,13 @@ uninstall:
 .PHONY: install-dev
 
 install-dev:
-	@pip install -r requirements-dev.txt
+	@pip install -e .[test]
+	@pip install -e .[lint]
 
 .PHONY: install-test
 
 install-test:
-	@pip install -r requirements/test.txt
+	@pip install -e .[test]
 
 .PHONY: test test-light
 
@@ -66,7 +66,7 @@ test-light:
 .PHONY: install-lint
 
 install-lint:
-	@pip install -r requirements/lint.txt
+	@pip install -e .[lint]
 
 .PHONY: isort isort-check
 

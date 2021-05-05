@@ -1,3 +1,0 @@
-# Dependencies for unfoldNd
-torch
-numpy
