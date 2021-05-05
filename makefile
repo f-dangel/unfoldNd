@@ -17,6 +17,10 @@ help:
 	@echo "        Run all examples"
 	@echo "install-lint"
 	@echo "        Install only the linter tools (included in install-dev)"
+	@echo "isort"
+	@echo "        Run isort (sort imports) on the project"
+	@echo "isort-check"
+	@echo "        Check if isort (sort imports) would change files"
 	@echo "black"
 	@echo "        Run black on the project"
 	@echo "black-check"
@@ -33,8 +37,7 @@ help:
 .PHONY: install
 
 install:
-	@pip install -r requirements.txt
-	@pip install .
+	@pip install -e .
 
 .PHONY: uninstall
 
@@ -44,12 +47,13 @@ uninstall:
 .PHONY: install-dev
 
 install-dev:
-	@pip install -r requirements-dev.txt
+	@pip install -e .[test]
+	@pip install -e .[lint]
 
 .PHONY: install-test
 
 install-test:
-	@pip install -r requirements/test.txt
+	@pip install -e .[test]
 
 .PHONY: test test-light
 
@@ -62,7 +66,15 @@ test-light:
 .PHONY: install-lint
 
 install-lint:
-	@pip install -r requirements/lint.txt
+	@pip install -e .[lint]
+
+.PHONY: isort isort-check
+
+isort:
+	@isort .
+
+isort-check:
+	@isort . --check --diff
 
 .PHONY: black black-check
 
@@ -96,3 +108,4 @@ conda-env:
 
 examples:
 	@python examples/example.py
+	@python examples/example_fold.py

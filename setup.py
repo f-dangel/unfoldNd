@@ -1,17 +1,19 @@
-"""Setup file for unfoldNd."""
+"""Setup file for unfoldNd.
 
-from setuptools import find_packages, setup
+Use setup.cfg to configure the project.
+"""
 
-setup(
-    author="Felix Dangel",
-    name="unfoldNd",
-    version="0.0.1",
-    description="N-dimensional unfold in PyTorch",
-    long_description="N-dimensional unfold in PyTorch using one-hot convolution",
-    long_description_content_type="text/markdown",
-    url="https://github.com/f-dangel/unfoldNd",
-    license="MIT",
-    packages=find_packages(),
-    zip_safe=False,
-    python_requires=">=3.6",
-)
+import sys
+
+from pkg_resources import VersionConflict, require
+from setuptools import setup
+
+try:
+    require("setuptools>=38.3")
+except VersionConflict:
+    print("Error: version of setuptools is too old (<38.3)!")
+    sys.exit(1)
+
+
+if __name__ == "__main__":
+    setup(use_scm_version=True)

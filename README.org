@@ -14,6 +14,12 @@ Currently, only 4-D input tensors (batched image-like tensors) are supported.
 
 ~unfoldNd~ implements the operation for 3d and 5d inputs and shows good [[id:489186e1-e003-47e6-87df-5266592ff278][performance]].
 
+---
+
+*News:*
+
+- [2021-05-02 Sun]: ~unfoldNd~ now also generalizes the ~fold~ operation (~col2im~) to 3d/4d/5d inputs
+
 * Installation
 
 #+begin_src python
@@ -24,11 +30,25 @@ Currently, only 4-D input tensors (batched image-like tensors) are supported.
 
 - [[file:examples/example.py][Simple example]]
 
-This package offers the following functions:
+This package offers the following main functionality:
 
 - ~unfoldNd.unfoldNd~ :: Like [[https://pytorch.org/docs/stable/nn.functional.html#torch.nn.functional.unfold][ ~torch.nn.functional.unfold~ ]], but supports 3d, 4d, and 5d inputs.
 
 - ~unfoldNd.UnfoldNd~ :: Like [[https://pytorch.org/docs/stable/generated/torch.nn.Unfold.html][ ~torch.nn.Unfold~ ]], but supports 3d, 4d, and 5d inputs.
+
+** Additional functionality (exotic)
+
+Turned out the multi-dimensional generalization of [[https://pytorch.org/docs/stable/nn.functional.html#torch.nn.functional.unfold][ ~torch.nn.functional.unfold~ ]] can be used to generalize [[https://pytorch.org/docs/stable/nn.functional.html#torch.nn.functional.fold][ ~torch.nn.functional.fold~ ]],
+
+- [[file:examples/example_fold.py][Simple example]]
+
+exposed through
+
+- ~unfoldNd.foldNd~ :: Like [[https://pytorch.org/docs/stable/nn.functional.html#torch.nn.functional.fold][ ~torch.nn.functional.fold~ ]], but supports 3d, 4d, and 5d inputs.
+
+- ~unfoldNd.FoldNd~ :: Like [[https://pytorch.org/docs/stable/generated/torch.nn.Fold.html][ ~torch.nn.Fold~ ]], but supports 3d, 4d, and 5d inputs.
+
+Keep in mind that, while tested, this feature is not benchmarked. However, sane performance can be expected, as it relies on N-dimensional unfold (benchmarked) and [[https://pytorch.org/docs/stable/generated/torch.scatter_add.html?highlight=scatter_add#torch.scatter_add][ ~torch.scatter_add~ ]].
 
 * Performance
 :PROPERTIES:

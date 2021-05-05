@@ -1,11 +1,18 @@
 """Utility functions for testing ``unfoldNd``."""
 
 import torch
+from torch.nn.modules.utils import _pair
 
 
 def make_id(problem):
     """Convert problem description in to human-readable id."""
-    key_value_strs = [f"{key}={value}" for key, value in problem.items()]
+    key_value_strs = []
+
+    for key, value in problem.items():
+        if key == "input_fn":
+            key_value_strs.append(f"input_shape={value().shape}")
+        else:
+            key_value_strs.append(f"{key}={value}")
 
     return ",".join(key_value_strs).replace(" ", "")
 
@@ -57,3 +64,17 @@ def _conv_unfold(inputs, unfolded_input, conv_module):
     result = torch.einsum("gocx,ngcxh->ngoh", weight_matrix, unfolded_input)
 
     return result.reshape(N, C_out, *spatial_out_size)
+
+
+def _add_dummy_dim(unfold_kwargs, inputs):
+    """Add dummy dimension to unfold hyperparameters and input."""
+    new_inputs = inputs.unsqueeze(-1)
+
+    new_kwargs = {}
+
+    for key, value in unfold_kwargs.items():
+        dummy = (0,) if key == "padding" else (1,)
+        new_value = _pair(value)[:-1] + dummy
+        new_kwargs[key] = new_value
+
+    return new_kwargs, new_inputs
