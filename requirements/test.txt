@@ -1,6 +1,0 @@
-# Dependencies for testing unfoldNd
-
-coveralls
-pytest
-pytest-cov
-pytest-optional-tests
