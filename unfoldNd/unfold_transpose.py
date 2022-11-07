@@ -2,12 +2,7 @@
 
 import torch
 
-from unfoldNd.utils import (
-    _get_conv,
-    _get_conv_transpose,
-    _get_kernel_size_numel,
-    _tuple,
-)
+from unfoldNd.utils import _get_conv_transpose, _get_kernel_size_numel, _tuple
 
 
 class UnfoldTransposeNd(torch.nn.Module):
@@ -126,7 +121,6 @@ def unfold_transposeNd(
 
 def _make_weight(in_channels, kernel_size, device, dtype):
     # TODO Update docstring
-    # TODO Maybe recycle one-hot weight from conv
     """Create one-hot transpose convolution kernel. ``kernel_size`` must be an ``N``-tuple.
 
     Details:
@@ -147,19 +141,8 @@ def _make_weight(in_channels, kernel_size, device, dtype):
     kernel_size_numel = _get_kernel_size_numel(kernel_size)
     repeat = [in_channels, 1] + [1 for _ in kernel_size]
 
-    # TODO Write more compactly
-    weight = torch.zeros(1, kernel_size_numel, *kernel_size)
-
-    for i in range(kernel_size_numel):
-        extraction = torch.zeros(kernel_size_numel)
-        extraction[i] = 1.0
-        weight[0, i] = extraction.reshape(*kernel_size)
-
-    weight = weight.repeat(*repeat)
-    return weight.to(dtype).to(device)
-
-    # return (
-    #     torch.eye(kernel_size_numel, device=device, dtype=dtype)
-    #     .reshape((kernel_size_numel, 1, *kernel_size))
-    #     .repeat(*repeat)
-    # )
+    return (
+        torch.eye(kernel_size_numel, device=device, dtype=dtype)
+        .reshape((1, kernel_size_numel, *kernel_size))
+        .repeat(*repeat)
+    )
