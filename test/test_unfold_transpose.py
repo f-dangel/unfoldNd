@@ -3,8 +3,12 @@
 from test.unfold_transpose_settings import (
     DEVICES,
     DEVICES_ID,
+    PROBLEMS_1D,
+    PROBLEMS_1D_IDS,
     PROBLEMS_2D,
     PROBLEMS_2D_IDS,
+    PROBLEMS_3D,
+    PROBLEMS_3D_IDS,
 )
 from test.utils import _conv_transpose_unfold
 
@@ -16,7 +20,11 @@ import unfoldNd
 
 
 @pytest.mark.parametrize("device", DEVICES, ids=DEVICES_ID)
-@pytest.mark.parametrize("problem", PROBLEMS_2D, ids=PROBLEMS_2D_IDS)
+@pytest.mark.parametrize(
+    "problem",
+    PROBLEMS_1D + PROBLEMS_2D + PROBLEMS_3D,
+    ids=PROBLEMS_1D_IDS + PROBLEMS_2D_IDS + PROBLEMS_3D_IDS,
+)
 def test_UnfoldTranspose_vs_ConvTransose(problem, device):
     """Compare transpose convolution with matrix-multiplication via unfold."""
     seed = problem["seed"]
@@ -24,6 +32,7 @@ def test_UnfoldTranspose_vs_ConvTransose(problem, device):
     unfold_transpose_kwargs = problem["unfold_transpose_kwargs"]
     out_channels = problem["out_channels"]
     in_channels = input_fn().shape[1]
+    groups = problem["groups"]
 
     torch.manual_seed(seed)
     inputs = input_fn().to(device)
@@ -35,7 +44,7 @@ def test_UnfoldTranspose_vs_ConvTransose(problem, device):
     }[inputs.dim() - 2]
 
     conv_transpose_module = conv_transpose_module(
-        in_channels, out_channels, **unfold_transpose_kwargs, bias=False
+        in_channels, out_channels, **unfold_transpose_kwargs, bias=False, groups=groups
     ).to(device)
     torch_result = conv_transpose_module(inputs)
 
