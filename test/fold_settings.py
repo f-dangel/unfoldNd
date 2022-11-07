@@ -42,9 +42,9 @@ PRECISION_PROBLEMS_2D = [
         "fold_kwargs": {
             # > smallest int which is exact as float32, 2 ** 24 = 116777217
             # (see https://stackoverflow.com/q/27207149 for details)
-            "output_size": (2 ** 12 + 2, 2 ** 12 + 2),
+            "output_size": (2**12 + 2, 2**12 + 2),
             "kernel_size": (2, 2),
-            "stride": 2 ** 10,
+            "stride": 2**10,
         },
     },
     # wrong result due to wrong float → long conversion
