@@ -83,8 +83,6 @@ def _make_weight(in_channels, kernel_size, device, dtype):
             ``K = (K₁, K₂, ..., Kₙ)`` is the kernel size. Filter groups are
             one-hot such that they effectively extract one element of the patch
             the kernel currently overlaps with.
-
-
     """
     kernel_size_numel = _get_kernel_size_numel(kernel_size)
     repeat = [in_channels, 1] + [1 for _ in kernel_size]
