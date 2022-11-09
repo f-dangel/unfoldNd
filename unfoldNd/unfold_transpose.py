@@ -120,20 +120,33 @@ def unfold_transposeNd(
 
 
 def _make_weight(in_channels, kernel_size, device, dtype):
-    # TODO Update docstring
-    """Create one-hot transpose convolution kernel. ``kernel_size`` must be an ``N``-tuple.
+    """Create one-hot transpose convolution kernel.
 
-    Details:
-        Let ``T`` denote the one-hot weight, then
-        ``T[c * i, 0, j] = δᵢⱼ ∀ c = 1, ... C_in``
-        (``j`` is a group index of the ``Kᵢ``).
+    ``kernel_size`` must be an ``N``-tuple.
 
-        This can be done by building diagonals ``D[i, j] = δᵢⱼ``, reshaping
-        them into ``[∏ᵢ Kᵢ, 1, K]``, and repeat them ``C_in`` times along the
-        leading dimension.
+    This is basically the same construction mechanism as for unfolding for convolutions.
+    For kernels of transpose convolution however, the dimensions of in_channels and
+    out_channels are swapped.
+
+    Details: Let's assume 2d convolution. We are given an input of shape `[N,
+        C_in, H, W]` and a kernel of hape [*, *, K_H, K_W]`. We then want to
+        produce an output with shape `[N, C_in * K_H * K_W, L]` with `L` the
+        patch size. We want to treat each input channel independently with the
+        same kernel `t` of shape `[1, K_H * K_W, K_H, K_W]` that satisfies
+        `t[0, h * w, h, w] = δ_{h,w}`. We can run transpose convolution with
+        `groups=C_in` to achieve this independent treatment. Because the
+        kernel's input channels must match that of the input for transpose
+        convolution (see its documentation), we need to replicate this kernel
+        for each channel (`C_in` times) along the leading (input channel) axes.
+
+        This yields a kernel `T` that satisfies `T[c, h * w, h, w] = δ_{h, w}`.
+
+        Such a kernel is formed by creating a `K_H * K_W` identity matrix,
+        reshaping it into `[1, K_H * K_W, K_H, K_W]`, and repeating it `C_in`
+        times along the leading dimension.
 
     Returns:
-        torch.Tensor : A tensor of shape ``[ C_in * ∏ᵢ Kᵢ, 1, K]`` where
+        torch.Tensor : A tensor of shape ``[C_in, ∏ᵢ Kᵢ, K]`` where
             ``K = (K₁, K₂, ..., Kₙ)`` is the kernel size. Filter groups are
             one-hot such that they effectively extract one element of the patch
             the kernel currently overlaps with.
