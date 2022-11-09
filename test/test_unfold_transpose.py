@@ -52,6 +52,8 @@ def test_UnfoldTranspose_vs_ConvTransose(problem, device):
     unfolded_inputs = unfoldNd.UnfoldTransposeNd(**unfold_transpose_kwargs).to(device)(
         inputs, output_size=output_size
     )
-    result_lib = _conv_transpose_unfold(inputs, unfolded_inputs, conv_transpose_module)
+    result_lib = _conv_transpose_unfold(
+        inputs, unfolded_inputs, conv_transpose_module, output_size=output_size
+    )
 
     assert torch.allclose(torch_result, result_lib, atol=5e-7)

@@ -37,6 +37,9 @@ class UnfoldTransposeNd(torch.nn.Module):
     ):
         """Determine ``output_padding`` from hyperparameters and ``output_size``.
 
+        This follows the hacky way described in
+        https://discuss.pytorch.org/t/the-output-size-of-convtranspose2d-differs-from-the-expected-output-size/1876/11 # noqa: B950
+
         Note:
             This may break if the PyTorch code changes.
 

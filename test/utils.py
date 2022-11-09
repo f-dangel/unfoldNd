@@ -66,7 +66,9 @@ def _conv_unfold(inputs, unfolded_input, conv_module):
     return result.reshape(N, C_out, *spatial_out_size)
 
 
-def _conv_transpose_unfold(inputs, unfolded_input, conv_transpose_module):
+def _conv_transpose_unfold(
+    inputs, unfolded_input, conv_transpose_module, output_size=None
+):
     """Perform transpose convolution via matrix multiplication.
 
     Copied and modified from:
@@ -74,12 +76,12 @@ def _conv_transpose_unfold(inputs, unfolded_input, conv_transpose_module):
     """
     assert conv_transpose_module.bias is None
 
-    def get_output_shape(input, module):
-        return module(input).shape
+    def get_output_shape(input, module, output_size):
+        return module(input, output_size=output_size).shape
 
     N, C_in = inputs.shape[0], inputs.shape[1]
 
-    output_shape = get_output_shape(inputs, conv_transpose_module)
+    output_shape = get_output_shape(inputs, conv_transpose_module, output_size)
     C_out = output_shape[1]
     spatial_out_size = output_shape[2:]
     spatial_out_numel = spatial_out_size.numel()

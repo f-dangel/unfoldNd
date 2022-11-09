@@ -110,6 +110,19 @@ PROBLEMS_2D = [
             "dilation": (3, 1),
         },
     },
+    # with nontrivial output_size, taken from
+    # https://discuss.pytorch.org/t/the-output-size-of-convtranspose2d-differs-from-the-expected-output-size/1876/11
+    {
+        "seed": 0,
+        "input_fn": lambda: torch.rand(1, 3, 10, 10),
+        "out_channels": 1,
+        "groups": 1,
+        "output_size": (21, 21),
+        "unfold_transpose_kwargs": {
+            "kernel_size": 2,
+            "stride": 2,
+        },
+    },
 ]
 PROBLEMS_2D_IDS = [make_id(problem) for problem in PROBLEMS_2D]
 
