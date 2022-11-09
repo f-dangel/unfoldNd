@@ -41,7 +41,7 @@ class UnfoldTransposeNd(torch.nn.Module):
             This may break if the PyTorch code changes.
 
         Link:
-            https://github.com/pytorch/pytorch/blob/febff45900e57d3e05ee72c1ecfe7d4fcbc582d9/torch/nn/modules/conv.py#L606-L644.
+            https://github.com/pytorch/pytorch/blob/febff45900e57d3e05ee72c1ecfe7d4fcbc582d9/torch/nn/modules/conv.py#L606-L644. # noqa: B950
         """
         # get convolution operation
         batch_size_and_in_channels_dims = 2
