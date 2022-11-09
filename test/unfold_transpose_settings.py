@@ -111,7 +111,7 @@ PROBLEMS_2D = [
         },
     },
     # with nontrivial output_size, taken from
-    # https://discuss.pytorch.org/t/the-output-size-of-convtranspose2d-differs-from-the-expected-output-size/1876/11
+    # https://discuss.pytorch.org/t/the-output-size-of-convtranspose2d-differs-from-the-expected-output-size/1876/11 # noqa: B950
     {
         "seed": 0,
         "input_fn": lambda: torch.rand(1, 3, 10, 10),

@@ -50,7 +50,7 @@ class UnfoldTransposeNd(torch.nn.Module):
         batch_size_and_in_channels_dims = 2
         N = input.dim() - batch_size_and_in_channels_dims
 
-        # TODO Required for _output_padding
+        # get _output_padding
         kernel_size = _tuple(kernel_size, N)
         stride = _tuple(stride, N)
         padding = _tuple(padding, N)
