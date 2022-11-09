@@ -33,6 +33,7 @@ def test_UnfoldTranspose_vs_ConvTransose(problem, device):
     out_channels = problem["out_channels"]
     in_channels = input_fn().shape[1]
     groups = problem["groups"]
+    output_size = problem["output_size"]
 
     torch.manual_seed(seed)
     inputs = input_fn().to(device)
@@ -46,10 +47,10 @@ def test_UnfoldTranspose_vs_ConvTransose(problem, device):
     conv_transpose_module = conv_transpose_module(
         in_channels, out_channels, **unfold_transpose_kwargs, bias=False, groups=groups
     ).to(device)
-    torch_result = conv_transpose_module(inputs)
+    torch_result = conv_transpose_module(inputs, output_size=output_size)
 
     unfolded_inputs = unfoldNd.UnfoldTransposeNd(**unfold_transpose_kwargs).to(device)(
-        inputs
+        inputs, output_size=output_size
     )
     result_lib = _conv_transpose_unfold(inputs, unfolded_inputs, conv_transpose_module)
 

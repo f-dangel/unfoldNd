@@ -13,6 +13,7 @@ PROBLEMS_1D = [
         "input_fn": lambda: torch.rand(3, 2, 20),
         "out_channels": 3,
         "groups": 1,
+        "output_size": None,
         "unfold_transpose_kwargs": {
             "kernel_size": 2,
             "padding": 1,
@@ -23,6 +24,7 @@ PROBLEMS_1D = [
         "input_fn": lambda: torch.rand(3, 2, 111),
         "out_channels": 3,
         "groups": 1,
+        "output_size": None,
         "unfold_transpose_kwargs": {
             "kernel_size": 2,
             "padding": 1,
@@ -35,6 +37,7 @@ PROBLEMS_1D = [
         "input_fn": lambda: torch.rand(3, 3, 113),
         "out_channels": 6,
         "groups": 3,
+        "output_size": None,
         "unfold_transpose_kwargs": {
             "kernel_size": 2,
             "padding": 2,
@@ -51,6 +54,7 @@ PROBLEMS_2D = [
         "input_fn": lambda: torch.rand(2, 3, 50, 40),
         "out_channels": 2,
         "groups": 1,
+        "output_size": None,
         "unfold_transpose_kwargs": {
             "kernel_size": 1,
         },
@@ -60,6 +64,7 @@ PROBLEMS_2D = [
         "input_fn": lambda: torch.rand(3, 2, 10, 10),
         "out_channels": 3,
         "groups": 1,
+        "output_size": None,
         "unfold_transpose_kwargs": {
             "kernel_size": 2,
             "padding": 1,
@@ -72,6 +77,7 @@ PROBLEMS_2D = [
         "input_fn": lambda: torch.rand(1, 3, 16, 16),
         "out_channels": 6,
         "groups": 1,
+        "output_size": None,
         "unfold_transpose_kwargs": {
             "kernel_size": 2,
             "padding": 2,
@@ -84,6 +90,7 @@ PROBLEMS_2D = [
         "input_fn": lambda: torch.rand(3, 2, 11, 13),
         "out_channels": 6,
         "groups": 2,
+        "output_size": None,
         "unfold_transpose_kwargs": {
             "kernel_size": 2,
             "padding": 1,
@@ -95,6 +102,7 @@ PROBLEMS_2D = [
         "input_fn": lambda: torch.rand(10, 8, 25, 50),
         "out_channels": 15,
         "groups": 1,
+        "output_size": None,
         "unfold_transpose_kwargs": {
             "kernel_size": (3, 5),
             "padding": (4, 2),
@@ -111,6 +119,7 @@ PROBLEMS_3D = [
         "input_fn": lambda: torch.rand(3, 2, 7, 9, 9),
         "out_channels": 6,
         "groups": 1,
+        "output_size": None,
         "unfold_transpose_kwargs": {
             "kernel_size": 2,
             "padding": 2,
@@ -123,6 +132,7 @@ PROBLEMS_3D = [
         "input_fn": lambda: torch.rand(3, 2, 5, 13, 17),
         "out_channels": 3,
         "groups": 1,
+        "output_size": None,
         "unfold_transpose_kwargs": {
             "kernel_size": 2,
             "padding": 1,
@@ -135,6 +145,7 @@ PROBLEMS_3D = [
         "input_fn": lambda: torch.rand(3, 2, 23, 34, 55),
         "out_channels": 4,
         "groups": 2,
+        "output_size": None,
         "unfold_transpose_kwargs": {
             "kernel_size": (2, 3, 4),
             "padding": (0, 1, 1),
