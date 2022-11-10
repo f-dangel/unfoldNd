@@ -74,13 +74,18 @@ def _make_weight(in_channels, kernel_size, device, dtype):
         C_in, H, W]` and a kernel of shape `[*, *, K_H, K_W]`. We then want to
         produce an output with shape `[N, C_in * K_H * K_W, L]` with `L` the
         number of patches. We can run convolution with `groups=C_in`. This will
-        treat each input channel independently with the same kernel of shape
-        `[C_in * K_H * K_W, 1, K_H, K_W]`. This kernel `T` satisfies `T[c * h *
-        w, 0, h, w] = δ_{h,w}`.
+        treat each input channel independently with the same kernel `t` of shape
+        `[K_H * K_W, 1, K_H, K_W]` that satisfies `t[h * w, 0, h, w] = δ_{h, w}`.
+        We can run convolution with `groups=C_in` to achieve this independent
+        treatment, but for that we must duplicate it `C_in` times along the leading
+        dimension, because the kernel's output dimension must match that of the output
+        for convolution in group mode (see its documentation).
+
+        This yields a kernel `T` that satisfies `T[c * h * w, 0, h, w] = δ_{h,w}`.
 
         Such a kernel is formed by creating a `K_H * K_W` identity matrix,
-        reshaping it into `[K_H * K_W, 1, K_H, K_W]`, and repeating it `C_in`
-        times along the leading dimension.
+        reshaping it into `[K_H * K_W, 1, K_H, K_W]` (`t`), and repeating it `C_in`
+        times along the leading dimension (`T`).
 
     Returns:
         torch.Tensor : A tensor of shape ``[C_in * ∏ᵢ Kᵢ, 1, K]`` where
