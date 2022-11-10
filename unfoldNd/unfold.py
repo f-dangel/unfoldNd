@@ -70,21 +70,28 @@ def _make_weight(in_channels, kernel_size, device, dtype):
     """Create one-hot convolution kernel. ``kernel_size`` must be an ``N``-tuple.
 
     Details:
-        Let ``T`` denote the one-hot weight, then
-        ``T[c * i, 0, j] = δᵢⱼ ∀ c = 1, ... C_in``
-        (``j`` is a group index of the ``Kᵢ``).
+        Let's assume 2d convolution. We are given an input of shape `[N,
+        C_in, H, W]` and a kernel of shape `[*, *, K_H, K_W]`. We then want to
+        produce an output with shape `[N, C_in * K_H * K_W, L]` with `L` the
+        number of patches. We can run convolution with `groups=C_in`. This will
+        treat each input channel independently with the same kernel `t` of shape
+        `[K_H * K_W, 1, K_H, K_W]` that satisfies `t[h * w, 0, h, w] = δ_{h, w}`.
+        We can run convolution with `groups=C_in` to achieve this independent
+        treatment, but for that we must duplicate it `C_in` times along the leading
+        dimension, because the kernel's output dimension must match that of the output
+        for convolution in group mode (see its documentation).
 
-        This can be done by building diagonals ``D[i, j] = δᵢⱼ``, reshaping
-        them into ``[∏ᵢ Kᵢ, 1, K]``, and repeat them ``C_in`` times along the
-        leading dimension.
+        This yields a kernel `T` that satisfies `T[c * h * w, 0, h, w] = δ_{h,w}`.
+
+        Such a kernel is formed by creating a `K_H * K_W` identity matrix,
+        reshaping it into `[K_H * K_W, 1, K_H, K_W]` (`t`), and repeating it `C_in`
+        times along the leading dimension (`T`).
 
     Returns:
-        torch.Tensor : A tensor of shape ``[ C_in * ∏ᵢ Kᵢ, 1, K]`` where
+        torch.Tensor : A tensor of shape ``[C_in * ∏ᵢ Kᵢ, 1, K]`` where
             ``K = (K₁, K₂, ..., Kₙ)`` is the kernel size. Filter groups are
             one-hot such that they effectively extract one element of the patch
             the kernel currently overlaps with.
-
-
     """
     kernel_size_numel = _get_kernel_size_numel(kernel_size)
     repeat = [in_channels, 1] + [1 for _ in kernel_size]

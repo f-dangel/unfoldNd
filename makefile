@@ -107,5 +107,6 @@ conda-env:
 .PHONY: examples
 
 examples:
-	@python examples/example.py
+	@python examples/example_unfold.py
 	@python examples/example_fold.py
+	@python examples/example_unfold_transpose.py

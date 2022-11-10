@@ -66,6 +66,41 @@ def _conv_unfold(inputs, unfolded_input, conv_module):
     return result.reshape(N, C_out, *spatial_out_size)
 
 
+def _conv_transpose_unfold(
+    inputs, unfolded_input, conv_transpose_module, output_size=None
+):
+    """Perform transpose convolution via matrix multiplication.
+
+    Copied and modified from:
+        https://github.com/f-dangel/backpack/blob/development/test/utils/test_conv_transpose.py#L17-L43 # noqa: B950
+    """
+    assert conv_transpose_module.bias is None
+
+    def get_output_shape(input, module, output_size):
+        return module(input, output_size=output_size).shape
+
+    N, C_in = inputs.shape[0], inputs.shape[1]
+
+    output_shape = get_output_shape(inputs, conv_transpose_module, output_size)
+    C_out = output_shape[1]
+    spatial_out_size = output_shape[2:]
+    spatial_out_numel = spatial_out_size.numel()
+    kernel_size_numel = conv_transpose_module.weight.shape[2:].numel()
+
+    G = conv_transpose_module.groups
+
+    weight_matrix = conv_transpose_module.weight.data.reshape(
+        C_in // G, G, C_out // G, kernel_size_numel
+    )
+    unfolded_input = unfolded_input.reshape(
+        N, C_in // G, G, kernel_size_numel, spatial_out_numel
+    )
+
+    result = torch.einsum("cgox,ncgxh->ngoh", weight_matrix, unfolded_input)
+
+    return result.reshape(N, C_out, *spatial_out_size)
+
+
 def _add_dummy_dim(unfold_kwargs, inputs):
     """Add dummy dimension to unfold hyperparameters and input."""
     new_inputs = inputs.unsqueeze(-1)
