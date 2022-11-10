@@ -58,7 +58,7 @@ Like input unfolding for convolutions, one can apply the same concept to the inp
 
 The following example explains input unfolding for transpose convolutions by demonstrating the connection to transpose convolution as matrix multiplication.
 
-- Simple example
+- [[file:examples/example_unfold_transpose.py][Simple example]]
 
 This functionality is exposed through
 
