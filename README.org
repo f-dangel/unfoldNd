@@ -30,7 +30,7 @@ Currently, only 4-D input tensors (batched image-like tensors) are supported.
 
 * Usage
 
-- [[file:examples/example.py][Simple example]]
+- [[file:examples/example_unfold.py][Simple example]]
 
 This package offers the following main functionality:
 
