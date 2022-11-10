@@ -69,7 +69,6 @@ class UnfoldTransposeNd(torch.nn.Module):
 
         # the signature of _output padding changed between torch==1.11.1 and 1.12.0
         if TORCH_VERSION_AT_LEAST_1_12_0:
-            num_spatial_dims = input.dims() - 2
             return torch.nn.modules.conv._ConvTransposeNd._output_padding(
                 self_dummy,
                 input,
@@ -77,7 +76,7 @@ class UnfoldTransposeNd(torch.nn.Module):
                 stride,
                 padding,
                 kernel_size,
-                num_spatial_dims,
+                N,
                 dilation=dilation,
             )
 
