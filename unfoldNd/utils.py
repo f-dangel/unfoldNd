@@ -3,6 +3,7 @@
 from typing import Callable
 
 import numpy
+from pkg_resources import get_distribution, packaging
 from torch.nn.functional import (
     conv1d,
     conv2d,
@@ -12,6 +13,9 @@ from torch.nn.functional import (
     conv_transpose3d,
 )
 from torch.nn.modules.utils import _pair, _single, _triple
+
+TORCH_VERSION = packaging.version.parse(get_distribution("torch").version)
+TORCH_VERSION_AT_LEAST_1_12_0 = TORCH_VERSION >= packaging.version.parse("1.12.0")
 
 
 def _get_kernel_size_numel(kernel_size):

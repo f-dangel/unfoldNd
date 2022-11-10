@@ -2,7 +2,12 @@
 
 import torch
 
-from unfoldNd.utils import _get_conv_transpose, _get_kernel_size_numel, _tuple
+from unfoldNd.utils import (
+    TORCH_VERSION_AT_LEAST_1_12_0,
+    _get_conv_transpose,
+    _get_kernel_size_numel,
+    _tuple,
+)
 
 
 class UnfoldTransposeNd(torch.nn.Module):
@@ -41,7 +46,8 @@ class UnfoldTransposeNd(torch.nn.Module):
         https://discuss.pytorch.org/t/the-output-size-of-convtranspose2d-differs-from-the-expected-output-size/1876/11 # noqa: B950
 
         Note:
-            This may break if the PyTorch code changes.
+            This may break if the PyTorch code changes. Please submit an issue if
+            you encounter problems.
 
         Link:
             https://github.com/pytorch/pytorch/blob/febff45900e57d3e05ee72c1ecfe7d4fcbc582d9/torch/nn/modules/conv.py#L606-L644. # noqa: B950
@@ -61,8 +67,28 @@ class UnfoldTransposeNd(torch.nn.Module):
 
         self_dummy = None
 
+        # the signature of _output padding changed between torch==1.11.1 and 1.12.0
+        if TORCH_VERSION_AT_LEAST_1_12_0:
+            return torch.nn.modules.conv._ConvTransposeNd._output_padding(
+                self_dummy,
+                input,
+                output_size,
+                stride,
+                padding,
+                kernel_size,
+                dilation=dilation,
+            )
+
+        num_spatial_dims = input.dims() - 2
         return torch.nn.modules.conv._ConvTransposeNd._output_padding(
-            self_dummy, input, output_size, stride, padding, kernel_size, dilation
+            self_dummy,
+            input,
+            output_size,
+            stride,
+            padding,
+            kernel_size,
+            num_spatial_dims,
+            dilation=dilation,
         )
 
     def forward(self, input, output_size=None):
