@@ -18,6 +18,8 @@ Currently, only 4-D input tensors (batched image-like tensors) are supported.
 
 *News:*
 
+- [2022-11-09 Wed]: Support for input unfolding for transpose convolutions (~im2col~) with 3d/4d/5d inputs.
+
 - [2021-05-02 Sun]: ~unfoldNd~ now also generalizes the ~fold~ operation (~col2im~) to 3d/4d/5d inputs
 
 * Installation
@@ -28,7 +30,7 @@ Currently, only 4-D input tensors (batched image-like tensors) are supported.
 
 * Usage
 
-- [[file:examples/example.py][Simple example]]
+- [[file:examples/example_unfold.py][Simple example]]
 
 This package offers the following main functionality:
 
@@ -49,6 +51,20 @@ exposed through
 - ~unfoldNd.FoldNd~ :: Like [[https://pytorch.org/docs/stable/generated/torch.nn.Fold.html][ ~torch.nn.Fold~ ]], but supports 3d, 4d, and 5d inputs.
 
 Keep in mind that, while tested, this feature is not benchmarked. However, sane performance can be expected, as it relies on N-dimensional unfold (benchmarked) and [[https://pytorch.org/docs/stable/generated/torch.scatter_add.html?highlight=scatter_add#torch.scatter_add][ ~torch.scatter_add~ ]].
+
+---
+
+Like input unfolding for convolutions, one can apply the same concept to the input of a transpose convolution. There is no comparable functionality for this in PyTorch as it is very exotic.
+
+The following example explains input unfolding for transpose convolutions by demonstrating the connection to transpose convolution as matrix multiplication.
+
+- [[file:examples/example_unfold_transpose.py][Simple example]]
+
+This functionality is exposed through
+
+- ~unfoldNd.unfoldTransposeNd~ :: Like ~unfoldNd.unfoldNd~, but for unfolding inputs of transpose convolutions.
+
+- ~unfoldNd.UnfoldTransposeNd~ :: Like ~unfoldNd.UnfoldNd~, but for unfolding inputs of transpose convolutions.
 
 * Performance
 :PROPERTIES:

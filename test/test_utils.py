@@ -28,6 +28,13 @@ def test__get_conv_raise_dimension_error(N):
         utils._get_conv(N)
 
 
+@pytest.mark.parametrize("N", UNSUPPORTED_N, ids=UNSUPPORTED_N_IDS)
+def test__get_conv_transpose_raise_dimension_error(N):
+    """Only N=1,2,3 are supported."""
+    with pytest.raises(ValueError):
+        utils._get_conv_transpose(N)
+
+
 @pytest.mark.parametrize(
     "kernel_size", UNSUPPORTED_KERNEL_SIZE, ids=UNSUPPORTED_KERNEL_SIZE_IDS
 )

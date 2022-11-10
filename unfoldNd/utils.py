@@ -1,8 +1,21 @@
 """Shared utility functions."""
 
+from typing import Callable
+
 import numpy
-from torch.nn.functional import conv1d, conv2d, conv3d
+from pkg_resources import get_distribution, packaging
+from torch.nn.functional import (
+    conv1d,
+    conv2d,
+    conv3d,
+    conv_transpose1d,
+    conv_transpose2d,
+    conv_transpose3d,
+)
 from torch.nn.modules.utils import _pair, _single, _triple
+
+TORCH_VERSION = packaging.version.parse(get_distribution("torch").version)
+TORCH_VERSION_AT_LEAST_1_12_0 = TORCH_VERSION >= packaging.version.parse("1.12.0")
 
 
 def _get_kernel_size_numel(kernel_size):
@@ -30,14 +43,26 @@ def _tuple(kernel_size, N):
         _raise_dimension_error(N)
 
 
-def _get_conv(N):
+def _get_conv(N: int) -> Callable:
     """Return convolution operation used to perform unfolding."""
     if N == 1:
         return conv1d
     elif N == 2:
         return conv2d
-    if N == 3:
+    elif N == 3:
         return conv3d
+    else:
+        _raise_dimension_error(N)
+
+
+def _get_conv_transpose(N: int) -> Callable:
+    """Return transpose convolution operation used to perform unfolding."""
+    if N == 1:
+        return conv_transpose1d
+    elif N == 2:
+        return conv_transpose2d
+    elif N == 3:
+        return conv_transpose3d
     else:
         _raise_dimension_error(N)
 
