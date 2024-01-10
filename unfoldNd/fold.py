@@ -56,12 +56,10 @@ def foldNd(input, output_size, kernel_size, dilation=1, padding=0, stride=1):
     """
     device = input.device
 
-    if isinstance(output_size, tuple):
-        N = len(output_size)
-        output_size_numel = _get_numel_from_shape(output_size)
-    else:
+    if not isinstance(output_size, tuple):
         raise ValueError(f"'output_size' must be tuple. Got {type(output_size)}.")
 
+    N = len(output_size)
     kernel_size = _tuple(kernel_size, N)
     kernel_size_numel = _get_kernel_size_numel(kernel_size)
 
@@ -69,21 +67,37 @@ def foldNd(input, output_size, kernel_size, dilation=1, padding=0, stride=1):
     in_channels_kernel_size_numel = input.shape[1]
     in_channels = in_channels_kernel_size_numel // kernel_size_numel
 
-    _check_output_size(output_size_numel)
-    idx = torch.arange(output_size_numel, dtype=torch.float32, device=device).reshape(
-        1, 1, *output_size
-    )
-    idx = unfoldNd(idx, kernel_size, dilation=dilation, padding=padding, stride=stride)
+    # Set up an array containing the locations on the padded image
+    padding = _tuple(padding, N)
+    padded_output_size = tuple(o + 2 * p for o, p in zip(output_size, padding))
+    padded_output_size_numel = _get_numel_from_shape(padded_output_size)
+    _check_output_size(padded_output_size_numel)
 
+    idx = torch.arange(
+        padded_output_size_numel, dtype=torch.float32, device=device
+    ).reshape(1, 1, *padded_output_size)
+    idx = unfoldNd(idx, kernel_size, dilation=dilation, padding=0, stride=stride)
+
+    # Replicate indices over batch and channels, then scatter the patch values
+    # back to the padded image
     input = input.reshape(batch_size, in_channels, -1)
     idx = idx.reshape(1, 1, -1).long().expand(batch_size, in_channels, -1)
 
     output = torch.zeros(
-        batch_size, in_channels, output_size_numel, device=device, dtype=input.dtype
+        batch_size,
+        in_channels,
+        padded_output_size_numel,
+        device=device,
+        dtype=input.dtype,
     )
     output.scatter_add_(2, idx, input)
+    output = output.reshape(batch_size, in_channels, *padded_output_size)
 
-    return output.reshape(batch_size, in_channels, *output_size)
+    # Remove the pixels that correspond to padding
+    for n, (out_n, padding_n) in enumerate(zip(output_size, padding), start=2):
+        output = output.narrow(n, padding_n, out_n)
+
+    return output
 
 
 def _check_output_size(output_size_numel):

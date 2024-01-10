@@ -47,13 +47,13 @@ uninstall:
 .PHONY: install-dev
 
 install-dev:
-	@pip install -e .[test]
-	@pip install -e .[lint]
+	@pip install -e ."[test]"
+	@pip install -e ."[lint]"
 
 .PHONY: install-test
 
 install-test:
-	@pip install -e .[test]
+	@pip install -e ."[test]"
 
 .PHONY: test test-light
 
@@ -66,7 +66,7 @@ test-light:
 .PHONY: install-lint
 
 install-lint:
-	@pip install -e .[lint]
+	@pip install -e ."[lint]"
 
 .PHONY: isort isort-check
 

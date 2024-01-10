@@ -16,6 +16,16 @@ PROBLEMS_2D = [
             "kernel_size": (2, 2),
         },
     },
+    {
+        "seed": 0,
+        "input_fn": lambda: torch.rand(2, 3 * 2 * 2, 5 * 9),
+        "fold_kwargs": {
+            "output_size": (4, 8),
+            "kernel_size": 2,
+            "padding": 1,
+        },
+        "id": "bug30-fold-with-padding",
+    },
 ]
 PROBLEMS_2D_IDS = [make_id(problem) for problem in PROBLEMS_2D]
 
