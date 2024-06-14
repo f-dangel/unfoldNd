@@ -4,7 +4,7 @@ channels:
   - defaults
 dependencies:
   - pip=19.3.1
-  - python=3.7.6
+  - python=3.8.19
   - pip:
     - -e .[lint]
     - -e .[test]
