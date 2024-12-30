@@ -4,14 +4,14 @@ Use setup.cfg to configure the project.
 """
 
 import sys
-from distutils.version import LooseVersion
+from packaging.version import Version
 from importlib.metadata import PackageNotFoundError, version
 
 from setuptools import setup
 
 try:
-    setuptools_version = LooseVersion(version("setuptools"))
-    required_version = LooseVersion("38.3")
+    setuptools_version = Version(version("setuptools"))
+    required_version = Version("38.3")
     if setuptools_version < required_version:
         print("Error: version of setuptools is too old (<38.3)!")
         sys.exit(1)

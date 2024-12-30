@@ -1,6 +1,6 @@
 """Shared utility functions."""
 
-from distutils.version import LooseVersion
+from packaging.version import Version
 from importlib.metadata import version
 from typing import Callable
 
@@ -15,8 +15,8 @@ from torch.nn.functional import (
 )
 from torch.nn.modules.utils import _pair, _single, _triple
 
-TORCH_VERSION = LooseVersion(version("torch"))
-TORCH_VERSION_AT_LEAST_1_12_0 = TORCH_VERSION >= LooseVersion("1.12.0")
+TORCH_VERSION = Version(version("torch"))
+TORCH_VERSION_AT_LEAST_1_12_0 = TORCH_VERSION >= Version("1.12.0")
 
 
 def _get_kernel_size_numel(kernel_size):
