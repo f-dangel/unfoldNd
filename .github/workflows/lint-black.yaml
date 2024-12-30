@@ -1,15 +1,6 @@
 name: Lint-black
 
-on:
-  push:
-    branches:
-      - '*'
-  pull_request:
-    branches:
-      - development
-      - main
-      - release
-
+on: [push, pull_request]
 
 jobs:
   black:

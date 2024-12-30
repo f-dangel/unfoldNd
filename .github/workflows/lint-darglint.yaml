@@ -1,15 +1,6 @@
 name: Lint-darglint
 
-on:
-  push:
-    branches:
-      - '*'
-  pull_request:
-    branches:
-      - development
-      - main
-      - release
-
+on: [push, pull_request]
 
 jobs:
   darglint:

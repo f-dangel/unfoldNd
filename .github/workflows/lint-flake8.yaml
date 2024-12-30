@@ -1,14 +1,6 @@
 name: Lint-flake8
 
-on:
-  push:
-    branches:
-      - '*'
-  pull_request:
-    branches:
-      - development
-      - main
-      - release
+on: [push, pull_request]
 
 jobs:
   flake8:

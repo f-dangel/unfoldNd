@@ -4,9 +4,9 @@ Use setup.cfg to configure the project.
 """
 
 import sys
-from packaging.version import Version
 from importlib.metadata import PackageNotFoundError, version
 
+from packaging.version import Version
 from setuptools import setup
 
 try:

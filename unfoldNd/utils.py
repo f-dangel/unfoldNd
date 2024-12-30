@@ -1,10 +1,10 @@
 """Shared utility functions."""
 
-from packaging.version import Version
 from importlib.metadata import version
 from typing import Callable
 
 import numpy
+from packaging.version import Version
 from torch.nn.functional import (
     conv1d,
     conv2d,
