@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Switch from `distutils` (deprecated) to `packaging`
+
 ## [0.2.2] - 2024-06-14
 
 - Switch from `pkg_resources` (deprecated) to `importlib`+`distutils`, deprecate
